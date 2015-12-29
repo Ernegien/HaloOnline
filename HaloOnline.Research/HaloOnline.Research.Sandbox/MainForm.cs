@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using HaloOnline.Research.Core.Runtime;
 
 namespace HaloOnline.Research.Sandbox
 {
@@ -15,6 +16,16 @@ namespace HaloOnline.Research.Sandbox
         public MainForm()
         {
             InitializeComponent();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            using (GameProcess game = new GameProcess("eldorado"))
+            {
+               
+                
+                 
+            }
         }
     }
 }

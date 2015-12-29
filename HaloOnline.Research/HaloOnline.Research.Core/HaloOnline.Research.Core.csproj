@@ -42,12 +42,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Imports\Kernel32.cs" />
+    <Compile Include="Imports\Structs\FloatingSaveArea.cs" />
+    <Compile Include="Imports\Structs\LdtEntry.cs" />
+    <Compile Include="Imports\Structs\LdtHighBits.cs" />
+    <Compile Include="Imports\Structs\MemoryBasicInformation.cs" />
+    <Compile Include="Imports\Structs\ThreadContext.cs" />
+    <Compile Include="Imports\Types\MemoryAllocationType.cs" />
+    <Compile Include="Imports\Types\MemoryFreeType.cs" />
+    <Compile Include="Imports\Types\MemoryProtect.cs" />
+    <Compile Include="Imports\Types\ProcessAccessFlags.cs" />
+    <Compile Include="Imports\Types\ThreadAccessFlags.cs" />
+    <Compile Include="Imports\Types\ThreadContextFlags.cs" />
+    <Compile Include="Imports\User32.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtime\GameProcess.cs" />
+    <Compile Include="Runtime\ProcessMemoryStream.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Cache\" />
-    <Folder Include="Imports\" />
-    <Folder Include="Runtime\" />
     <Folder Include="Utilities\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
