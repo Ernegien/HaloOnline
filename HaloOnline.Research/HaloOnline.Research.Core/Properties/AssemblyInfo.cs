@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("HaloOnline.Research.Runtime.Core")]
+[assembly: AssemblyTitle("HaloOnline.Research.Core")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("HaloOnline.Research.Runtime.Core")]
+[assembly: AssemblyProduct("HaloOnline.Research.Core")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -21,7 +21,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("600be6aa-ff1b-4675-9913-2a3615713381")]
+[assembly: Guid("02e93c37-4cd3-4f21-90a7-5d2809107a3c")]
 
 // Version information for an assembly consists of the following four values:
 //

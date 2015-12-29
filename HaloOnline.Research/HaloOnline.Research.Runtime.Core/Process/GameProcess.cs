@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HaloOnline.Research.Runtime.Core
+namespace HaloOnline.Research.Runtime.Core.Process
 {
-    public class Class1
+    public class GameProcess
     {
+
     }
 }

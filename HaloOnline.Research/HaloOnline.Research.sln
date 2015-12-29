@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaloOnline.Research.Runtime.Core", "HaloOnline.Research.Runtime.Core\HaloOnline.Research.Runtime.Core.csproj", "{600BE6AA-FF1B-4675-9913-2A3615713381}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaloOnline.Research.Sandbox", "HaloOnline.Research.Sandbox\HaloOnline.Research.Sandbox.csproj", "{AC53B2A5-2443-4129-91DD-5516270B852B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaloOnline.Research.Core", "HaloOnline.Research.Core\HaloOnline.Research.Core.csproj", "{02E93C37-4CD3-4F21-90A7-5D2809107A3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{600BE6AA-FF1B-4675-9913-2A3615713381}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{600BE6AA-FF1B-4675-9913-2A3615713381}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{600BE6AA-FF1B-4675-9913-2A3615713381}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{600BE6AA-FF1B-4675-9913-2A3615713381}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AC53B2A5-2443-4129-91DD-5516270B852B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AC53B2A5-2443-4129-91DD-5516270B852B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC53B2A5-2443-4129-91DD-5516270B852B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC53B2A5-2443-4129-91DD-5516270B852B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02E93C37-4CD3-4F21-90A7-5D2809107A3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02E93C37-4CD3-4F21-90A7-5D2809107A3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02E93C37-4CD3-4F21-90A7-5D2809107A3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02E93C37-4CD3-4F21-90A7-5D2809107A3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
