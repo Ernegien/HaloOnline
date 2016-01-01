@@ -5,7 +5,7 @@ using HaloOnline.Research.Core.Imports;
 namespace HaloOnline.Research.Core.Runtime
 {
     /// <summary>
-    /// Allows for the reading and writing of memory in a process.
+    /// Provides memory access to a remote process.
     /// </summary>
     public unsafe class ProcessMemoryStream : Stream
     {
@@ -73,6 +73,9 @@ namespace HaloOnline.Research.Core.Runtime
 
         public override int Read(byte[] buffer, int offset, int count)
         {
+            if (offset + count > buffer.Length)
+                throw new IndexOutOfRangeException();
+
             int bytesRead;
             fixed (byte* pBuffer = buffer)
             {
@@ -84,6 +87,9 @@ namespace HaloOnline.Research.Core.Runtime
 
         public override void Write(byte[] buffer, int offset, int count)
         {
+            if (offset + count > buffer.Length)
+                throw new IndexOutOfRangeException();
+
             fixed (byte* pBuffer = buffer)
             {
                 int bytesWritten;

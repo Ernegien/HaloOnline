@@ -44,6 +44,11 @@
   <ItemGroup>
     <Compile Include="Imports\Kernel32.cs" />
     <Compile Include="Imports\Structs\FloatingSaveArea.cs" />
+    <Compile Include="Imports\Structs\ImageDataDirectory.cs" />
+    <Compile Include="Imports\Structs\ImageDosHeader.cs" />
+    <Compile Include="Imports\Structs\ImageFileHeader32.cs" />
+    <Compile Include="Imports\Structs\ImageNtHeaders32.cs" />
+    <Compile Include="Imports\Structs\ImageOptionalHeader32.cs" />
     <Compile Include="Imports\Structs\LdtEntry.cs" />
     <Compile Include="Imports\Structs\LdtHighBits.cs" />
     <Compile Include="Imports\Structs\MemoryBasicInformation.cs" />
@@ -58,10 +63,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\GameProcess.cs" />
     <Compile Include="Runtime\ProcessMemoryStream.cs" />
+    <Compile Include="Runtime\Tag.cs" />
+    <Compile Include="Runtime\TagCache.cs" />
+    <Compile Include="Runtime\TagClass.cs" />
+    <Compile Include="Utilities\DefaultDictionary.cs" />
+    <Compile Include="Runtime\GameVersion.cs" />
+    <Compile Include="Utilities\ProcessAddress.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Cache\" />
-    <Folder Include="Utilities\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

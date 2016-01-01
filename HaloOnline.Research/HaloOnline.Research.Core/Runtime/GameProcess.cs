@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
 using HaloOnline.Research.Core.Imports;
 using HaloOnline.Research.Core.Imports.Structs;
 using HaloOnline.Research.Core.Imports.Types;
+using HaloOnline.Research.Core.Utilities;
 
 namespace HaloOnline.Research.Core.Runtime
 {
@@ -14,7 +17,33 @@ namespace HaloOnline.Research.Core.Runtime
         /// The process name.
         /// </summary>
         public string Name { get; }
-   
+
+        /// <summary>
+        /// The engine version.
+        /// </summary>
+        public GameVersion Version
+        {
+            get
+            {
+                switch (Process.MainModule.FileVersionInfo.ProductVersion)
+                {
+                    case "1.106708": return GameVersion.Alpha;    // TODO: untested
+                    case "12.1.700255": return GameVersion.Latest;
+                    default: return GameVersion.Unknown;
+                }
+            }
+        }
+       
+        /// <summary>
+        /// The image base address.
+        /// </summary>
+        public uint ImageBaseAddress { get; private set; }
+
+        /// <summary>
+        /// The process base address.
+        /// </summary>
+        public uint ProcessBaseAddress => (uint)Process.MainModule.BaseAddress.ToInt32();
+
         /// <summary>
         /// The main thread id of the process.
         /// </summary>
@@ -43,7 +72,12 @@ namespace HaloOnline.Research.Core.Runtime
         /// <summary>
         /// Process memory stream.
         /// </summary>
-        public ProcessMemoryStream Memory { get; private set; }
+        public ProcessMemoryStream MemoryStream { get; private set; }
+
+        /// <summary>
+        /// Tag data cached in memory.
+        /// </summary>
+        public TagCache TagCache { get; private set; }
 
         #endregion
 
@@ -64,11 +98,33 @@ namespace HaloOnline.Research.Core.Runtime
         /// </summary>
         private void Initialize()
         {
+            // attempt to look up process by name
             Process = GetProcessByName(Name);
+
+            if (Version == GameVersion.Unknown)
+                throw new NotSupportedException($"Game version {Process.MainModule.FileVersionInfo.ProductVersion} is currently not supported.");
+
             ProcessHandle = Kernel32.OpenProcess(ProcessAccessFlags.All, false, (uint)Process.Id);
-            Memory = new ProcessMemoryStream(ProcessHandle);
             MainThreadId = User32.GetWindowThreadProcessId(Process.MainWindowHandle);
             MainThreadHandle = Kernel32.OpenThread(ThreadAccessFlags.All, false, MainThreadId);
+
+            // get original image base address from loaded application - http://blogs.msdn.com/b/kstanton/archive/2004/03/31/105060.aspx
+            using (FileStream fs = new FileStream(Process.MainModule.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (BinaryReader br = new BinaryReader(fs))
+            {
+                fs.Position = Marshal.OffsetOf(typeof(ImageDosHeader), nameof(ImageDosHeader.e_lfanew)).ToInt32();
+                int ntHeaderOffset = br.ReadInt32();
+                int fileHeaderSize = Marshal.SizeOf(typeof(ImageFileHeader32));
+                int fileHeaderOffset = Marshal.OffsetOf(typeof(ImageNtHeaders32), nameof(ImageNtHeaders32.FileHeader)).ToInt32();
+                int imageBaseOffset = Marshal.OffsetOf(typeof(ImageOptionalHeader32), nameof(ImageOptionalHeader32.ImageBase)).ToInt32();
+                fs.Position = ntHeaderOffset + fileHeaderOffset + fileHeaderSize + imageBaseOffset;
+                ImageBaseAddress = br.ReadUInt32();
+            }
+
+            // initialize access to various sub-systems
+            ProcessAddress.Initialize(ImageBaseAddress, ProcessBaseAddress);
+            MemoryStream = new ProcessMemoryStream(ProcessHandle);
+            TagCache = new TagCache(this);
             TlsAddress = GetTlsAddress(MainThreadHandle);
         }
 
@@ -88,7 +144,7 @@ namespace HaloOnline.Research.Core.Runtime
         {
             try
             {
-                Memory?.Dispose();
+                MemoryStream?.Dispose();
 
                 if (MainThreadHandle != IntPtr.Zero)
                 {
@@ -140,8 +196,8 @@ namespace HaloOnline.Research.Core.Runtime
             LdtEntry ldt = Kernel32.GetThreadSelectorEntry(threadHandle, context.SegFs);
 
             uint tlsArrayPtr = ldt.BaseAddress + 0x2C;
-            uint tlsArrayAddress = Memory.ReadUInt32(tlsArrayPtr);
-            return Memory.ReadUInt32(tlsArrayAddress + slotIndex * sizeof(uint));
+            uint tlsArrayAddress = MemoryStream.ReadUInt32(tlsArrayPtr);
+            return MemoryStream.ReadUInt32(tlsArrayAddress + slotIndex * sizeof(uint));
         }
 
         /// <summary>
