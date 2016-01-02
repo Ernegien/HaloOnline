@@ -77,7 +77,7 @@ namespace HaloOnline.Research.Core.Runtime
         /// <summary>
         /// Process memory stream.
         /// </summary>
-        public ProcessMemoryStream MemoryStream { get; private set; }
+        public ProcessMemoryStream Memory { get; private set; }
 
         /// <summary>
         /// Tag data cached in memory.
@@ -135,7 +135,7 @@ namespace HaloOnline.Research.Core.Runtime
 
             // initialize access to various sub-systems
             ProcessAddress.Initialize(ImageBaseAddress, ProcessBaseAddress);
-            MemoryStream = new ProcessMemoryStream(ProcessHandle);
+            Memory = new ProcessMemoryStream(ProcessHandle);
             TlsAddress = GetTlsAddress(MainThreadHandle);
             TagCache = new TagCache(this);
             Addresses = new GameAddresses(this);
@@ -157,7 +157,7 @@ namespace HaloOnline.Research.Core.Runtime
         {
             try
             {
-                MemoryStream?.Dispose();
+                Memory?.Dispose();
 
                 if (MainThreadHandle != IntPtr.Zero)
                 {
@@ -209,8 +209,8 @@ namespace HaloOnline.Research.Core.Runtime
             LdtEntry ldt = Kernel32.GetThreadSelectorEntry(threadHandle, context.SegFs);
 
             uint tlsArrayPtr = ldt.BaseAddress + 0x2C;
-            uint tlsArrayAddress = MemoryStream.ReadUInt32(tlsArrayPtr);
-            return MemoryStream.ReadUInt32(tlsArrayAddress + slotIndex * sizeof(uint));
+            uint tlsArrayAddress = Memory.ReadUInt32(tlsArrayPtr);
+            return Memory.ReadUInt32(tlsArrayAddress + slotIndex * sizeof(uint));
         }
 
         /// <summary>

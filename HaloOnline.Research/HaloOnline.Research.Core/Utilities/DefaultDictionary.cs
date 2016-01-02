@@ -14,7 +14,7 @@ namespace HaloOnline.Research.Core.Utilities
         public TKey DefaultKey { get; }
 
         /// <summary>
-        /// TODO: descriptione
+        /// TODO: description
         /// </summary>
         /// <param name="defaultKey"></param>
         public DefaultDictionary(TKey defaultKey)

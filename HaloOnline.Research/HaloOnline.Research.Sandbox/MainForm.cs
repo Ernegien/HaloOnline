@@ -26,17 +26,17 @@ namespace HaloOnline.Research.Sandbox
 
         private void Globals(GameProcess game)
         {
-            var randomMath = game.MemoryStream.ReadUInt32(game.TlsAddress + 0x2AC); // contains single float 163029.641
-            var cinematicGlobals = game.MemoryStream.ReadUInt32(game.TlsAddress + 0x6C);
-            var directorGlobals = game.MemoryStream.ReadUInt32(game.TlsAddress + 0xC0);
-            var killTriggerVolumeState = game.MemoryStream.ReadUInt32(game.TlsAddress + 0x1F8);
-            var directorScripting = game.MemoryStream.ReadUInt32(game.TlsAddress + 0x238);
-            var objectGlobals = game.MemoryStream.ReadUInt32(game.TlsAddress + 0x50);
-            var loopObjects = game.MemoryStream.ReadUInt32(game.TlsAddress + 0x150);
-            var objects = game.MemoryStream.ReadUInt32(game.TlsAddress + 0xC);
-            var objectMessagingQueue = game.MemoryStream.ReadUInt32(game.TlsAddress + 0x23C);
-            var objectNameList = game.MemoryStream.ReadUInt32(game.TlsAddress + 0x1F0);
-            var resourceGlobals = game.MemoryStream.ReadUInt32(game.TlsAddress + 0x2D8);
+            var randomMath = game.Memory.ReadUInt32(game.TlsAddress + 0x2AC); // contains single float 163029.641
+            var cinematicGlobals = game.Memory.ReadUInt32(game.TlsAddress + 0x6C);
+            var directorGlobals = game.Memory.ReadUInt32(game.TlsAddress + 0xC0);
+            var killTriggerVolumeState = game.Memory.ReadUInt32(game.TlsAddress + 0x1F8);
+            var directorScripting = game.Memory.ReadUInt32(game.TlsAddress + 0x238);
+            var objectGlobals = game.Memory.ReadUInt32(game.TlsAddress + 0x50);
+            var loopObjects = game.Memory.ReadUInt32(game.TlsAddress + 0x150);
+            var objects = game.Memory.ReadUInt32(game.TlsAddress + 0xC);
+            var objectMessagingQueue = game.Memory.ReadUInt32(game.TlsAddress + 0x23C);
+            var objectNameList = game.Memory.ReadUInt32(game.TlsAddress + 0x1F0);
+            var resourceGlobals = game.Memory.ReadUInt32(game.TlsAddress + 0x2D8);
 
             
         }
