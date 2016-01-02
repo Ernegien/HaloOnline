@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 using HaloOnline.Research.Core.Runtime;
 using HaloOnline.Research.Core.Utilities;
@@ -21,6 +20,7 @@ namespace HaloOnline.Research.Sandbox
             {
                 Globals(game);
                 Tags(game);
+                JmadResearch(game);
             }
         }
 
@@ -36,8 +36,7 @@ namespace HaloOnline.Research.Sandbox
             var objects = game.MemoryStream.ReadUInt32(game.TlsAddress + 0xC);
             var objectMessagingQueue = game.MemoryStream.ReadUInt32(game.TlsAddress + 0x23C);
             var objectNameList = game.MemoryStream.ReadUInt32(game.TlsAddress + 0x1F0);
-
-
+            var resourceGlobals = game.MemoryStream.ReadUInt32(game.TlsAddress + 0x2D8);
 
         }
 
@@ -47,6 +46,11 @@ namespace HaloOnline.Research.Sandbox
             {
                 var tag = game.TagCache.GetTag(i);
             }
+        }
+
+        private void JmadResearch(GameProcess game)
+        {
+            
         }
     }
 }

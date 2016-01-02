@@ -66,7 +66,7 @@ namespace HaloOnline.Research.Core.Utilities
             if (!Initialized)
                 throw new FieldAccessException("ProcessAddress.Initialize must be called first.");
 
-            return new ProcessAddress(x + ImageBaseAddress - ProcessBaseAddress);
+            return new ProcessAddress(ToImageAddress(x));
         }
 
         /// <summary>
@@ -79,6 +79,16 @@ namespace HaloOnline.Research.Core.Utilities
                 throw new FieldAccessException("ProcessAddress.Initialize must be called first.");
 
             return x.Value;
+        }
+
+        /// <summary>
+        /// Converts a process address back to an image address.
+        /// </summary>
+        /// <param name="processAddress"></param>
+        /// <returns></returns>
+        public static uint ToImageAddress(uint processAddress)
+        {
+            return processAddress + ImageBaseAddress - ProcessBaseAddress;
         }
     }
 }
