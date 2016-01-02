@@ -84,6 +84,11 @@ namespace HaloOnline.Research.Core.Runtime
         /// </summary>
         public TagCache TagCache { get; private set; }
 
+        /// <summary>
+        /// A collection of global addresses.
+        /// </summary>
+        public GameAddresses Addresses { get; private set; }
+
         #endregion
 
         #region Initialization & Disposal
@@ -131,8 +136,9 @@ namespace HaloOnline.Research.Core.Runtime
             // initialize access to various sub-systems
             ProcessAddress.Initialize(ImageBaseAddress, ProcessBaseAddress);
             MemoryStream = new ProcessMemoryStream(ProcessHandle);
-            TagCache = new TagCache(this);
             TlsAddress = GetTlsAddress(MainThreadHandle);
+            TagCache = new TagCache(this);
+            Addresses = new GameAddresses(this);
         }
 
         /// <summary>

@@ -38,6 +38,7 @@ namespace HaloOnline.Research.Sandbox
             var objectNameList = game.MemoryStream.ReadUInt32(game.TlsAddress + 0x1F0);
             var resourceGlobals = game.MemoryStream.ReadUInt32(game.TlsAddress + 0x2D8);
 
+            
         }
 
         private void Tags(GameProcess game)
