@@ -18,7 +18,7 @@ namespace HaloOnline.Research.Core.Runtime
         /// <summary>
         /// The process name.
         /// </summary>
-        public string Name { get; }
+        public string Name => Process.ProcessName;
 
         /// <summary>
         /// The build date.
@@ -101,17 +101,25 @@ namespace HaloOnline.Research.Core.Runtime
         /// <param name="name">The process name.</param>
         public GameProcess(string name)
         {
-            Name = name;
-            Initialize();
+            Initialize(GetProcessByName(name));
+        }
+
+        /// <summary>
+        /// Provides access to the game process.
+        /// </summary>
+        /// <param name="process">The process.</param>
+        public GameProcess(Process process)
+        {
+            Initialize(process);
         }
 
         /// <summary>
         /// Initializes core components.
         /// </summary>
-        private void Initialize()
+        private void Initialize(Process process)
         {
             // get process info
-            Process = GetProcessByName(Name);
+            Process = process;
             ProcessHandle = Kernel32.OpenProcess(ProcessAccessFlags.All, false, (uint)Process.Id);
             MainThreadId = User32.GetWindowThreadProcessId(Process.MainWindowHandle);
             MainThreadHandle = Kernel32.OpenThread(ThreadAccessFlags.All, false, MainThreadId);
@@ -149,7 +157,7 @@ namespace HaloOnline.Research.Core.Runtime
         public void Reset()
         {
             Dispose();
-            Initialize();
+            Initialize(Process);
         }
 
         /// <summary>

@@ -30,6 +30,9 @@ namespace HaloOnline.Research.Core.Runtime
             if (pattern == null)
                 throw new ArgumentNullException(nameof(pattern));
 
+            if (patternMask != null && pattern.Length != patternMask.Length)
+                throw new ArgumentException("If a pattern mask is specified its length must be equal to the pattern length.");
+
             List<ProcessAddress> results = new List<ProcessAddress>();
 
             // get some info about the main module's memory and read it all into one giant buffer of love

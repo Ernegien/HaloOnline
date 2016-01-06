@@ -53,6 +53,12 @@
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HaloOnline.Research.Core\HaloOnline.Research.Core.csproj">
+      <Project>{02e93c37-4cd3-4f21-90a7-5d2809107a3c}</Project>
+      <Name>HaloOnline.Research.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
