@@ -4,10 +4,10 @@ using System.Diagnostics;
 namespace HaloOnline.Research.Core.Utilities
 {
     /// <summary>
-    /// Provides translation of image addresses to process addresses.
+    /// Provides translation of 32-bit image addresses to process addresses.
     /// </summary>
     [DebuggerDisplay("{Value}")]
-    public class ProcessAddress
+    public class ProcessAddress : IComparable<ProcessAddress>
     {
         /// <summary>
         /// The image address.
@@ -89,6 +89,25 @@ namespace HaloOnline.Research.Core.Utilities
         public static uint ToImageAddress(uint processAddress)
         {
             return processAddress + ImageBaseAddress - ProcessBaseAddress;
+        }
+
+        /// <summary>
+        /// Performs a value comparison between two process addresses.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public int CompareTo(ProcessAddress other)
+        {
+            return other == null ? 1 : Value.CompareTo(other.Value);
+        }
+
+        /// <summary>
+        /// Returns the hexidecimal string representation of the process address.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"0x{Convert.ToString(Value, 16).PadLeft(8, '0')}";
         }
     }
 }

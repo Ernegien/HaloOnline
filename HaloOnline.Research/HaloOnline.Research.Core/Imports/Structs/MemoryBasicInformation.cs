@@ -7,12 +7,12 @@ namespace HaloOnline.Research.Core.Imports.Structs
     [StructLayout(LayoutKind.Sequential)]
     public struct MemoryBasicInformation
     {
-        public UIntPtr BaseAddress;
-        public UIntPtr AllocationBase;
+        public IntPtr BaseAddress;
+        public IntPtr AllocationBase;
         public MemoryProtect AllocationProtect;
-        public IntPtr RegionSize;
-        public uint State;  // TODO: declare type
+        public uint RegionSize;
+        public MemoryState State;
         public MemoryProtect Protect;
-        public uint Type;  // TODO: declare type
+        public MemoryType Type;
     }
 }

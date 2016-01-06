@@ -19,12 +19,12 @@ namespace HaloOnline.Research.Core.Runtime
         {
             get
             {
-                var tlsIndex = new DefaultDictionary<GameVersion, uint>(Game.Version)
+                var tlsOffset = new DefaultDictionary<GameVersion, uint>(Game.Version)
                 {
                     [GameVersion.Alpha] = 0x448,
                     [GameVersion.Latest] = 0xC
                 };
-                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsIndex);
+                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsOffset);
             }
         }
 
@@ -35,12 +35,12 @@ namespace HaloOnline.Research.Core.Runtime
         {
             get
             {
-                var tlsIndex = new DefaultDictionary<GameVersion, uint>(Game.Version)
+                var tlsOffset = new DefaultDictionary<GameVersion, uint>(Game.Version)
                 {
                     [GameVersion.Alpha] = 0x60,
                     [GameVersion.Latest] = 0xC0
                 };
-                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsIndex);
+                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsOffset);
             }
         }
 
@@ -51,12 +51,12 @@ namespace HaloOnline.Research.Core.Runtime
         {
             get
             {
-                var tlsIndex = new DefaultDictionary<GameVersion, uint>(Game.Version)
+                var tlsOffset = new DefaultDictionary<GameVersion, uint>(Game.Version)
                 {
                     [GameVersion.Alpha] = 0x40,
                     [GameVersion.Latest] = 8
                 };
-                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsIndex);
+                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsOffset);
             }
         }
 
@@ -67,12 +67,12 @@ namespace HaloOnline.Research.Core.Runtime
         {
             get
             {
-                var tlsIndex = new DefaultDictionary<GameVersion, uint>(Game.Version)
+                var tlsOffset = new DefaultDictionary<GameVersion, uint>(Game.Version)
                 {
                     [GameVersion.Alpha] = 0x44,
                     [GameVersion.Latest] = 0x30
                 };
-                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsIndex);
+                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsOffset);
             }
         }
 
@@ -83,12 +83,12 @@ namespace HaloOnline.Research.Core.Runtime
         {
             get
             {
-                var tlsIndex = new DefaultDictionary<GameVersion, uint>(Game.Version)
+                var tlsOffset = new DefaultDictionary<GameVersion, uint>(Game.Version)
                 {
                     [GameVersion.Alpha] = 0x5C,
                     [GameVersion.Latest] = 0x84
                 };
-                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsIndex);
+                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsOffset);
             }
         }
 
@@ -99,12 +99,12 @@ namespace HaloOnline.Research.Core.Runtime
         {
             get
             {
-                var tlsIndex = new DefaultDictionary<GameVersion, uint>(Game.Version)
+                var tlsOffset = new DefaultDictionary<GameVersion, uint>(Game.Version)
                 {
                     [GameVersion.Alpha] = 0xC4,
                     [GameVersion.Latest] = 0x4C
                 };
-                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsIndex);
+                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsOffset);
             }
         }
 
@@ -116,12 +116,12 @@ namespace HaloOnline.Research.Core.Runtime
         {
             get
             {
-                var tlsIndex = new DefaultDictionary<GameVersion, uint>(Game.Version)
+                var tlsOffset = new DefaultDictionary<GameVersion, uint>(Game.Version)
                 {
                     [GameVersion.Alpha] = 0xC8,
                     [GameVersion.Latest] = 0x224
                 };
-                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsIndex);
+                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsOffset);
             }
         }
 
@@ -132,12 +132,12 @@ namespace HaloOnline.Research.Core.Runtime
         {
             get
             {
-                var tlsIndex = new DefaultDictionary<GameVersion, uint>(Game.Version)
+                var tlsOffset = new DefaultDictionary<GameVersion, uint>(Game.Version)
                 {
                     [GameVersion.Alpha] = 0x50,
                     [GameVersion.Latest] = 0x64
                 };
-                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsIndex);
+                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsOffset);
             }
         }
 
@@ -148,15 +148,14 @@ namespace HaloOnline.Research.Core.Runtime
         {
             get
             {
-                var tlsIndex = new DefaultDictionary<GameVersion, uint>(Game.Version)
+                var tlsOffset = new DefaultDictionary<GameVersion, uint>(Game.Version)
                 {
                     [GameVersion.Alpha] = 0x3C,
                     [GameVersion.Latest] = 0x24
                 };
-                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsIndex);
+                return Game.Memory.ReadUInt32(Game.TlsAddress + tlsOffset);
             }
         }
-
 
         /// <summary>
         /// TODO: description

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using HaloOnline.Research.Core.Runtime;
 using HaloOnline.Research.Core.Utilities;
@@ -18,14 +19,18 @@ namespace HaloOnline.Research.Sandbox
         {
             using (GameProcess game = new GameProcess(GameName))
             {
+                GameScanner scanner = new GameScanner(game);
+                var results = scanner.SimpleScan(new byte[] { 0x8B, 0x87, 0x60, 0x02, 0x00, 0x00, 0x6A});
+
                 Globals(game);
                 Tags(game);
-                JmadResearch(game);
+                Research(game);
             }
         }
 
         private void Globals(GameProcess game)
         {
+            // ms30 stuff below
             var randomMath = game.Memory.ReadUInt32(game.TlsAddress + 0x2AC); // contains single float 163029.641
             var cinematicGlobals = game.Memory.ReadUInt32(game.TlsAddress + 0x6C);
             var directorGlobals = game.Memory.ReadUInt32(game.TlsAddress + 0xC0);
@@ -49,9 +54,14 @@ namespace HaloOnline.Research.Sandbox
             }
         }
 
-        private void JmadResearch(GameProcess game)
+        private void Research(GameProcess game)
         {
-            
+            var fmodPatchAddress = new DefaultDictionary<GameVersion, ProcessAddress>(game.Version)
+            {
+                [GameVersion.Alpha] = new ProcessAddress(0x140DA75),
+                [GameVersion.Latest] = new ProcessAddress(0xFAA9E5)
+            };
+            game.Memory.WriteByte((ProcessAddress)fmodPatchAddress, 0x2);
         }
     }
 }

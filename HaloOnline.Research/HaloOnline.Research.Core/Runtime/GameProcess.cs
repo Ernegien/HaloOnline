@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using HaloOnline.Research.Core.Imports;
 using HaloOnline.Research.Core.Imports.Structs;
@@ -228,6 +230,51 @@ namespace HaloOnline.Research.Core.Runtime
                 default: throw new Exception($"Multiple {name} processes found.");
             }
         }
+
+        public List<Range<uint>> GetMemoryRegions(Range<uint> searchRange = null, uint pageSize = 0x1000)
+        {
+            if (searchRange == null)
+                searchRange = new Range<uint>(uint.MinValue, uint.MaxValue);
+
+            List<Range<uint>> addressRanges = new List<Range<uint>>();
+
+            uint offset = searchRange.Minimum;
+            while (offset < searchRange.Maximum - pageSize)
+            {
+                try
+                {
+                    var memoryInfo = Kernel32.VirtualQueryEx(ProcessHandle, new UIntPtr(offset));
+                    uint startAddress = (uint)memoryInfo.BaseAddress.ToInt64();
+                    uint size = memoryInfo.RegionSize;
+                    uint endAddress = startAddress + size;
+
+                    // only count committed memory
+                    if (memoryInfo.State == MemoryState.Commit)
+                    {
+                        // combine current range with previous if they border eachother
+                        if (addressRanges.Count > 0 && addressRanges.Last().Maximum == startAddress)
+                        {
+                            uint previousStartAddress = addressRanges.Last().Minimum;
+                            addressRanges.RemoveAt(addressRanges.Count - 1);
+                            addressRanges.Add(new Range<uint>(previousStartAddress, endAddress));
+                        }
+                        else
+                        {
+                            addressRanges.Add(new Range<uint>(startAddress, endAddress));
+                        }
+                    }
+
+                    // skip past the memory region found
+                    offset += size;
+                }
+                catch
+                {
+                    offset += pageSize;
+                }
+            }
+
+            return addressRanges;
+        } 
 
         #endregion
     }
