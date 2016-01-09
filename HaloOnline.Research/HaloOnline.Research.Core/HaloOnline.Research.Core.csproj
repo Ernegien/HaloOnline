@@ -65,8 +65,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\GameProcess.cs" />
     <Compile Include="Runtime\GameAddresses.cs" />
-    <Compile Include="Runtime\ProcessMemoryStream.cs" />
-    <Compile Include="Runtime\GameScanner.cs" />
+    <Compile Include="Utilities\ProcessStream.cs" />
+    <Compile Include="Utilities\ProcessScanner.cs" />
     <Compile Include="Runtime\Tag.cs" />
     <Compile Include="Runtime\TagCache.cs" />
     <Compile Include="Runtime\TagClass.cs" />

@@ -19,7 +19,7 @@ namespace HaloOnline.Research.Sandbox
         {
             using (GameProcess game = new GameProcess(GameName))
             {
-                GameScanner scanner = new GameScanner(game);
+                ProcessScanner scanner = new ProcessScanner(game.Process);
                 var results = scanner.SimpleScan(new byte[] { 0x8B, 0x87, 0x60, 0x02, 0x00, 0x00, 0x6A});
 
                 Globals(game);

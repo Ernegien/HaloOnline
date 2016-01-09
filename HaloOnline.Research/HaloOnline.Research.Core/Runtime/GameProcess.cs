@@ -79,7 +79,7 @@ namespace HaloOnline.Research.Core.Runtime
         /// <summary>
         /// Process memory stream.
         /// </summary>
-        public ProcessMemoryStream Memory { get; private set; }
+        public ProcessStream Memory { get; private set; }
 
         /// <summary>
         /// Tag data cached in memory.
@@ -145,7 +145,7 @@ namespace HaloOnline.Research.Core.Runtime
 
             // initialize access to various sub-systems
             ProcessAddress.Initialize(ImageBaseAddress, ProcessBaseAddress);
-            Memory = new ProcessMemoryStream(ProcessHandle);
+            Memory = new ProcessStream(ProcessHandle);
             TlsAddress = GetTlsAddress(MainThreadHandle);
             TagCache = new TagCache(this);
             Addresses = new GameAddresses(this);

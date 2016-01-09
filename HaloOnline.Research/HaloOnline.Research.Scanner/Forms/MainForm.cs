@@ -14,7 +14,7 @@ namespace HaloOnline.Research.Scanner.Forms
     public partial class MainForm : Form
     {
         private GameProcess Game { get; set; }
-        private GameScanner Scanner { get; set; }
+        private ProcessScanner Scanner { get; set; }
 
         public MainForm()
         {
@@ -36,7 +36,7 @@ namespace HaloOnline.Research.Scanner.Forms
             if (processSelection.ShowDialog() == DialogResult.OK)
             {
                 Game = new GameProcess(processSelection.ProcessName);
-                Scanner = new GameScanner(Game);
+                Scanner = new ProcessScanner(Game.Process);
             }
             else Application.Exit();
         }
