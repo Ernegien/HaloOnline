@@ -36,8 +36,13 @@
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.2.3\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,14 +63,18 @@
     <Compile Include="Imports\Structs\MemoryBasicInformation.cs" />
     <Compile Include="Imports\Structs\MemoryState.cs" />
     <Compile Include="Imports\Structs\MemoryType.cs" />
+    <Compile Include="Imports\Structs\ProcessInformation.cs" />
+    <Compile Include="Imports\Structs\ProcessStartupInfo.cs" />
     <Compile Include="Imports\Structs\ThreadContext.cs" />
     <Compile Include="Imports\Types\MemoryAllocationType.cs" />
     <Compile Include="Imports\Types\MemoryFreeType.cs" />
     <Compile Include="Imports\Types\MemoryProtect.cs" />
     <Compile Include="Imports\Types\ProcessAccessFlags.cs" />
+    <Compile Include="Imports\Types\ProcessCreationFlags.cs" />
     <Compile Include="Imports\Types\ThreadAccessFlags.cs" />
     <Compile Include="Imports\Types\ThreadContextFlags.cs" />
     <Compile Include="Imports\User32.cs" />
+    <Compile Include="Logging\Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\GameProcess.cs" />
     <Compile Include="Runtime\GameAddresses.cs" />
@@ -84,6 +93,9 @@
     <Folder Include="Cache\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="nlog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

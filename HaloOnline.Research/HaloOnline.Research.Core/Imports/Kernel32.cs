@@ -24,6 +24,38 @@ namespace HaloOnline.Research.Core.Imports
         private static extern IntPtr UnmanagedOpenProcess(ProcessAccessFlags dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
 
         /// <summary>
+        /// Creates a new process and its primary thread.
+        /// </summary>
+        /// <param name="lpApplicationName"></param>
+        /// <param name="lpCommandLine"></param>
+        /// <param name="lpProcessAttributes"></param>
+        /// <param name="lpThreadAttributes"></param>
+        /// <param name="bInheritHandles"></param>
+        /// <param name="dwCreationFlags"></param>
+        /// <param name="lpEnvironment"></param>
+        /// <param name="lpCurrentDirectory"></param>
+        /// <param name="lpStartupInfo"></param>
+        /// <param name="lpProcessInformation"></param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll", EntryPoint = "CreateProcess", SetLastError = true)]
+        private static extern bool UnmanagedCreateProcess(string lpApplicationName,
+            string lpCommandLine, IntPtr lpProcessAttributes,
+            IntPtr lpThreadAttributes,
+            bool bInheritHandles, ProcessCreationFlags dwCreationFlags,
+            IntPtr lpEnvironment, string lpCurrentDirectory,
+            ref ProcessStartupInfo lpStartupInfo,
+            out ProcessInformation lpProcessInformation);
+
+        /// <summary>
+        /// Retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
+        /// </summary>
+        /// <param name="hModule"></param>
+        /// <param name="lpProcName"></param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll", EntryPoint = "GetProcAddress", SetLastError = true)]
+        private static extern IntPtr UnmanagedGetProcAddress(IntPtr hModule, string lpProcName);
+
+        /// <summary>
         /// Opens an existing thread object.
         /// </summary>
         /// <param name="dwDesiredAccess"></param>
@@ -32,6 +64,21 @@ namespace HaloOnline.Research.Core.Imports
         /// <returns></returns>
         [DllImport("kernel32.dll", EntryPoint = "OpenThread", SetLastError = true)]
         private static extern IntPtr UnmanagedOpenThread(ThreadAccessFlags dwDesiredAccess, bool bInheritHandle, uint dwThreadId);
+
+        /// <summary>
+        /// Creates a thread that runs in the virtual address space of another process.
+        /// </summary>
+        /// <param name="hProcess"></param>
+        /// <param name="lpThreadAttributes"></param>
+        /// <param name="dwStackSize"></param>
+        /// <param name="lpStartAddress"></param>
+        /// <param name="lpParameter"></param>
+        /// <param name="dwCreationFlags"></param>
+        /// <param name="lpThreadId"></param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll", EntryPoint = "CreateRemoteThread", SetLastError = true)]
+        private static extern IntPtr UnmanagedCreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttributes,
+            uint dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
 
         /// <summary>
         /// Closes an open object handle.
@@ -153,8 +200,8 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="flAllocationType"></param>
         /// <param name="flProtect"></param>
         /// <returns></returns>
-        [DllImport("kernel32.dll", EntryPoint = "VirtualAllocEx", SetLastError = true, ExactSpelling = true)]
-        static extern UIntPtr UnmanagedVirtualAllocEx(IntPtr hProcess, UIntPtr lpAddress,
+        [DllImport("kernel32.dll", EntryPoint = "VirtualAllocEx", SetLastError = true)]
+        private static extern UIntPtr UnmanagedVirtualAllocEx(IntPtr hProcess, UIntPtr lpAddress,
            uint dwSize, MemoryAllocationType flAllocationType, MemoryProtect flProtect);
 
         /// <summary>
@@ -165,9 +212,18 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="dwSize"></param>
         /// <param name="dwFreeType"></param>
         /// <returns></returns>
-        [DllImport("kernel32.dll", EntryPoint = "VirtualFreeEx", SetLastError = true, ExactSpelling = true)]
-        static extern bool UnmanagedVirtualFreeEx(IntPtr hProcess, UIntPtr lpAddress,
+        [DllImport("kernel32.dll", EntryPoint = "VirtualFreeEx", SetLastError = true)]
+        private static extern bool UnmanagedVirtualFreeEx(IntPtr hProcess, UIntPtr lpAddress,
            uint dwSize, MemoryAllocationType dwFreeType);
+
+        /// <summary>
+        /// Adds a directory to the search path used to locate DLLs for the application.
+        /// </summary>
+        /// <param name="lpPathName"></param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll", EntryPoint = "SetDllDirectory", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnmanagedSetDllDirectory(string lpPathName);
 
         #endregion
 
@@ -179,6 +235,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="access"></param>
         /// <param name="inheritHandle"></param>
         /// <param name="processId"></param>
+        /// <exception cref="Win32Exception"></exception>
         /// <returns></returns>
         public static IntPtr OpenProcess(ProcessAccessFlags access, bool inheritHandle, uint processId)
         {
@@ -191,11 +248,47 @@ namespace HaloOnline.Research.Core.Imports
         }
 
         /// <summary>
+        /// Creates a new process and its primary thread.
+        /// </summary>
+        /// <param name="commandLine"></param>
+        /// <param name="creationFlags"></param>
+        /// <param name="currentDirectory"></param>
+        /// <param name="startupInfo"></param>
+        /// <param name="processInformation"></param>
+        /// <exception cref="Win32Exception"></exception>
+        public static void CreateProcess(string commandLine, ProcessCreationFlags creationFlags,
+            string currentDirectory, ref ProcessStartupInfo startupInfo, out ProcessInformation processInformation)
+        {
+            if (!UnmanagedCreateProcess(null, commandLine, IntPtr.Zero, IntPtr.Zero, false, creationFlags, IntPtr.Zero, null, ref startupInfo, out processInformation))
+            {
+                throw new Win32Exception();
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
+        /// </summary>
+        /// <param name="moduleHandle"></param>
+        /// <param name="processName"></param>
+        /// <exception cref="Win32Exception"></exception>
+        /// <returns>The address of the exported function or variable.</returns>
+        public static IntPtr GetProcAddress(IntPtr moduleHandle, string processName)
+        {
+            IntPtr address = UnmanagedGetProcAddress(moduleHandle, processName);
+            if (address == null)
+            {
+                throw new Win32Exception();
+            }
+            return address;
+        }
+
+        /// <summary>
         /// Opens an existing thread object.
         /// </summary>
         /// <param name="access"></param>
         /// <param name="inheritHandle"></param>
         /// <param name="threadId"></param>
+        /// <exception cref="Win32Exception"></exception>
         /// <returns></returns>
         public static IntPtr OpenThread(ThreadAccessFlags access, bool inheritHandle, uint threadId)
         {
@@ -208,9 +301,28 @@ namespace HaloOnline.Research.Core.Imports
         }
 
         /// <summary>
+        /// Creates a thread that runs in the virtual address space of another process.
+        /// </summary>
+        /// <param name="processHandle"></param>
+        /// <param name="startAddress"></param>
+        /// <param name="parameter"></param>
+        /// <returns>Returns a handle to the new thread.</returns>
+        /// <exception cref="Win32Exception"></exception>
+        public static IntPtr CreateRemoteThread(IntPtr processHandle, IntPtr startAddress, IntPtr parameter)
+        {
+            IntPtr handle = UnmanagedCreateRemoteThread(processHandle, IntPtr.Zero, 0, startAddress, parameter, 0, IntPtr.Zero);
+            if (handle == null)
+            {
+                throw new Win32Exception();
+            }
+            return handle;
+        }
+
+        /// <summary>
         /// Suspends the specified thread id.
         /// </summary>
         /// <param name="id"></param>
+        /// <exception cref="Win32Exception"></exception>
         public static void SuspendThread(uint id)
         {
             IntPtr handle = OpenThread(ThreadAccessFlags.SuspendResume, false, id);
@@ -222,6 +334,7 @@ namespace HaloOnline.Research.Core.Imports
         /// Suspends the specified thread handle.
         /// </summary>
         /// <param name="handle"></param>
+        /// <exception cref="Win32Exception"></exception>
         public static void SuspendThread(IntPtr handle)
         {
             int suspendCount = UnmanagedSuspendThread(handle);
@@ -235,6 +348,7 @@ namespace HaloOnline.Research.Core.Imports
         /// Resumes the specified thread id.
         /// </summary>
         /// <param name="id"></param>
+        /// <exception cref="Win32Exception"></exception>
         public static void ResumeThread(uint id)
         {
             IntPtr handle = OpenThread(ThreadAccessFlags.SuspendResume, false, id);
@@ -246,6 +360,7 @@ namespace HaloOnline.Research.Core.Imports
         /// Resumes the specified thread handle.
         /// </summary>
         /// <param name="handle"></param>
+        /// <exception cref="Win32Exception"></exception>
         public static void ResumeThread(IntPtr handle)
         {
             int suspendCount = UnmanagedResumeThread(handle);
@@ -260,6 +375,7 @@ namespace HaloOnline.Research.Core.Imports
         /// </summary>
         /// <param name="handle"></param>
         /// <param name="selector"></param>
+        /// <exception cref="Win32Exception"></exception>
         /// <returns></returns>
         public static LdtEntry GetThreadSelectorEntry(IntPtr handle, uint selector)
         {
@@ -275,6 +391,7 @@ namespace HaloOnline.Research.Core.Imports
         /// Closes an open object handle.
         /// </summary>
         /// <param name="handle"></param>
+        /// <exception cref="Win32Exception"></exception>
         public static void CloseHandle(IntPtr handle)
         {
             if (!UnmanagedCloseHandle(handle))
@@ -288,6 +405,7 @@ namespace HaloOnline.Research.Core.Imports
         /// Retrieves the context of the specified thread.
         /// </summary>
         /// <param name="handle"></param>
+        /// <exception cref="Win32Exception"></exception>
         public static ThreadContext GetThreadContext(IntPtr handle)
         {
             ThreadContext context = new ThreadContext { ThreadContextFlags = ThreadContextFlags.All };
@@ -307,6 +425,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="lpBuffer"></param>
         /// <param name="dwSize"></param>
         /// <param name="lpNumberOfBytesRead"></param>
+        /// <exception cref="Win32Exception"></exception>
         public static void ReadProcessMemory(
             IntPtr hProcess,
             UIntPtr lpBaseAddress,
@@ -330,6 +449,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="lpBuffer"></param>
         /// <param name="nSize"></param>
         /// <param name="lpNumberOfBytesWritten"></param>
+        /// <exception cref="Win32Exception"></exception>
         public static void WriteProcessMemory(
             IntPtr hProcess,
             UIntPtr lpBaseAddress,
@@ -348,6 +468,7 @@ namespace HaloOnline.Research.Core.Imports
         /// </summary>
         /// <param name="processHandle"></param>
         /// <param name="address"></param>
+        /// <exception cref="Win32Exception"></exception>
         /// <returns></returns>
         public static MemoryBasicInformation VirtualQueryEx(IntPtr processHandle, UIntPtr address)
         {
@@ -366,6 +487,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="address"></param>
         /// <param name="size"></param>
         /// <param name="newProtect"></param>
+        /// <exception cref="Win32Exception"></exception>
         /// <returns>Returns the previous memory access protection.</returns>
         public static MemoryProtect VirtualProtectEx(IntPtr processHandle, UIntPtr address,
             uint size, MemoryProtect newProtect)
@@ -387,6 +509,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="size"></param>
         /// <param name="type"></param>
         /// <param name="protect"></param>
+        /// <exception cref="Win32Exception"></exception>
         /// <returns></returns>
         public static UIntPtr VirtualAllocEx(IntPtr processHandle, UIntPtr address, uint size, MemoryAllocationType type, MemoryProtect protect)
         {
@@ -405,9 +528,24 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="address"></param>
         /// <param name="size"></param>
         /// <param name="type"></param>
+        /// <exception cref="Win32Exception"></exception>
         public static void VirtualFreeEx(IntPtr processHandle, UIntPtr address, uint size, MemoryAllocationType type)
         {
             if (!UnmanagedVirtualFreeEx(processHandle, address, size, type))
+            {
+                throw new Win32Exception();
+            }
+        }
+
+        /// <summary>
+        /// Adds a directory to the search path used to locate DLLs for the application.
+        /// </summary>
+        /// <param name="pathName"></param>
+        /// <exception cref="Win32Exception"></exception>
+        /// <returns></returns>
+        public static void SetDllDirectory(string pathName)
+        {
+            if (!UnmanagedSetDllDirectory(pathName))
             {
                 throw new Win32Exception();
             }

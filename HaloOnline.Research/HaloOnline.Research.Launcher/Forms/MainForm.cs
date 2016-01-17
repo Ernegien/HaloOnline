@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using HaloOnline.Research.Launcher.Properties;
 
 namespace HaloOnline.Research.Launcher.Forms
 {
@@ -12,7 +13,7 @@ namespace HaloOnline.Research.Launcher.Forms
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            var servers = Properties.Settings.Default.UpdateServers;
+            var servers = Settings.Default.UpdateServers;
             foreach (var server in servers)
             {
                 
