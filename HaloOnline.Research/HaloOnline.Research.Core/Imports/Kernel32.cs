@@ -141,7 +141,7 @@ namespace HaloOnline.Research.Core.Imports
         [DllImport("kernel32.dll", EntryPoint = "ReadProcessMemory", SetLastError = true)]
         private static extern bool UnmanagedReadProcessMemory(
             IntPtr hProcess,
-            UIntPtr lpBaseAddress,
+            IntPtr lpBaseAddress,
             [Out] byte* lpBuffer,
             int dwSize,
             out int lpNumberOfBytesRead
@@ -160,7 +160,7 @@ namespace HaloOnline.Research.Core.Imports
         [DllImport("kernel32.dll", EntryPoint = "WriteProcessMemory", SetLastError = true)]
         private static extern bool UnmanagedWriteProcessMemory(
             IntPtr hProcess,
-            UIntPtr lpBaseAddress,
+            IntPtr lpBaseAddress,
             byte* lpBuffer,
             int nSize,
             out int lpNumberOfBytesWritten);
@@ -174,7 +174,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="dwLength"></param>
         /// <returns></returns>
         [DllImport("kernel32.dll", EntryPoint = "VirtualQueryEx", SetLastError = true)]
-        private static extern int UnmanagedVirtualQueryEx(IntPtr hProcess, UIntPtr lpAddress, 
+        private static extern int UnmanagedVirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, 
             out MemoryBasicInformation lpBuffer, uint dwLength);
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="lpflOldProtect"></param>
         /// <returns></returns>
         [DllImport("kernel32.dll", EntryPoint = "VirtualProtectEx", SetLastError = true)]
-        private static extern bool UnmanagedVirtualProtectEx(IntPtr hProcess, UIntPtr lpAddress,
+        private static extern bool UnmanagedVirtualProtectEx(IntPtr hProcess, IntPtr lpAddress,
            uint dwSize, MemoryProtect flNewProtect, ref MemoryProtect lpflOldProtect);
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="flProtect"></param>
         /// <returns></returns>
         [DllImport("kernel32.dll", EntryPoint = "VirtualAllocEx", SetLastError = true)]
-        private static extern UIntPtr UnmanagedVirtualAllocEx(IntPtr hProcess, UIntPtr lpAddress,
+        private static extern IntPtr UnmanagedVirtualAllocEx(IntPtr hProcess, IntPtr lpAddress,
            uint dwSize, MemoryAllocationType flAllocationType, MemoryProtect flProtect);
 
         /// <summary>
@@ -213,7 +213,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="dwFreeType"></param>
         /// <returns></returns>
         [DllImport("kernel32.dll", EntryPoint = "VirtualFreeEx", SetLastError = true)]
-        private static extern bool UnmanagedVirtualFreeEx(IntPtr hProcess, UIntPtr lpAddress,
+        private static extern bool UnmanagedVirtualFreeEx(IntPtr hProcess, IntPtr lpAddress,
            uint dwSize, MemoryAllocationType dwFreeType);
 
         /// <summary>
@@ -224,6 +224,14 @@ namespace HaloOnline.Research.Core.Imports
         [DllImport("kernel32.dll", EntryPoint = "SetDllDirectory", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool UnmanagedSetDllDirectory(string lpPathName);
+
+        /// <summary>
+        /// Retrieves a module handle for the specified module. The module must have been loaded by the calling process.
+        /// </summary>
+        /// <param name="lpModuleName"></param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll", EntryPoint = "GetModuleHandle", SetLastError = true)]
+        private static extern IntPtr UnmanagedGetModuleHandle(string lpModuleName);
 
         #endregion
 
@@ -400,7 +408,6 @@ namespace HaloOnline.Research.Core.Imports
             }
         }
 
-
         /// <summary>
         /// Retrieves the context of the specified thread.
         /// </summary>
@@ -428,7 +435,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <exception cref="Win32Exception"></exception>
         public static void ReadProcessMemory(
             IntPtr hProcess,
-            UIntPtr lpBaseAddress,
+            IntPtr lpBaseAddress,
             [Out] byte* lpBuffer,
             int dwSize,
             out int lpNumberOfBytesRead
@@ -452,7 +459,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <exception cref="Win32Exception"></exception>
         public static void WriteProcessMemory(
             IntPtr hProcess,
-            UIntPtr lpBaseAddress,
+            IntPtr lpBaseAddress,
             byte* lpBuffer,
             int nSize,
             out int lpNumberOfBytesWritten)
@@ -470,7 +477,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="address"></param>
         /// <exception cref="Win32Exception"></exception>
         /// <returns></returns>
-        public static MemoryBasicInformation VirtualQueryEx(IntPtr processHandle, UIntPtr address)
+        public static MemoryBasicInformation VirtualQueryEx(IntPtr processHandle, IntPtr address)
         {
             MemoryBasicInformation memInfo;
             if (UnmanagedVirtualQueryEx(processHandle, address, out memInfo, (uint)sizeof(MemoryBasicInformation)) == 0)
@@ -489,7 +496,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="newProtect"></param>
         /// <exception cref="Win32Exception"></exception>
         /// <returns>Returns the previous memory access protection.</returns>
-        public static MemoryProtect VirtualProtectEx(IntPtr processHandle, UIntPtr address,
+        public static MemoryProtect VirtualProtectEx(IntPtr processHandle, IntPtr address,
             uint size, MemoryProtect newProtect)
         {
             MemoryProtect oldProtect = new MemoryProtect();
@@ -511,10 +518,10 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="protect"></param>
         /// <exception cref="Win32Exception"></exception>
         /// <returns></returns>
-        public static UIntPtr VirtualAllocEx(IntPtr processHandle, UIntPtr address, uint size, MemoryAllocationType type, MemoryProtect protect)
+        public static IntPtr VirtualAllocEx(IntPtr processHandle, IntPtr address, uint size, MemoryAllocationType type, MemoryProtect protect)
         {
-            UIntPtr addr = UnmanagedVirtualAllocEx(processHandle, address, size, type, protect);
-            if (addr == UIntPtr.Zero)
+            IntPtr addr = UnmanagedVirtualAllocEx(processHandle, address, size, type, protect);
+            if (addr == IntPtr.Zero)
             {
                 throw new Win32Exception();
             }
@@ -529,7 +536,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="size"></param>
         /// <param name="type"></param>
         /// <exception cref="Win32Exception"></exception>
-        public static void VirtualFreeEx(IntPtr processHandle, UIntPtr address, uint size, MemoryAllocationType type)
+        public static void VirtualFreeEx(IntPtr processHandle, IntPtr address, uint size, MemoryAllocationType type)
         {
             if (!UnmanagedVirtualFreeEx(processHandle, address, size, type))
             {
@@ -549,6 +556,22 @@ namespace HaloOnline.Research.Core.Imports
             {
                 throw new Win32Exception();
             }
+        }
+
+        /// <summary>
+        /// Retrieves a module handle for the specified module. The module must have been loaded by the calling process.
+        /// </summary>
+        /// <param name="moduleName"></param>
+        /// <exception cref="Win32Exception"></exception>
+        /// <returns></returns>
+        public static IntPtr GetModuleHandle(string moduleName)
+        {
+            IntPtr handle = UnmanagedGetModuleHandle(moduleName);
+            if (handle == null)
+            {
+                throw new Win32Exception();
+            }
+            return handle;
         }
 
         #endregion

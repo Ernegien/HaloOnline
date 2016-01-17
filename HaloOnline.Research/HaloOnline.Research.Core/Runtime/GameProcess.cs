@@ -251,7 +251,7 @@ namespace HaloOnline.Research.Core.Runtime
             {
                 try
                 {
-                    var memoryInfo = Kernel32.VirtualQueryEx(ProcessHandle, new UIntPtr(offset));
+                    var memoryInfo = Kernel32.VirtualQueryEx(ProcessHandle, new IntPtr(offset));
                     uint startAddress = (uint)memoryInfo.BaseAddress.ToInt64();
                     uint size = memoryInfo.RegionSize;
                     uint endAddress = startAddress + size;
