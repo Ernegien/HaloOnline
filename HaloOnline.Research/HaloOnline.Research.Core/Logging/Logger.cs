@@ -148,7 +148,7 @@ namespace HaloOnline.Research.Core.Logging
         /// <param name="callerPath"></param>
         /// <param name="callerMember"></param>
         /// <param name="callerLine"></param>
-        public static void Log(LogLevel level, string message, Exception exception = null, [CallerFilePath] string callerPath = "", [CallerMemberName] string callerMember = "", [CallerLineNumber] int callerLine = 0)
+        private static void Log(LogLevel level, string message, Exception exception = null, string callerPath = "", string callerMember = "", int callerLine = 0)
         {
             try
             {
