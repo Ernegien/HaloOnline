@@ -4,15 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{02E93C37-4CD3-4F21-90A7-5D2809107A3C}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{93F9426C-ECEF-4E99-88FD-4A591DA78398}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HaloOnline.Research.Core</RootNamespace>
-    <AssemblyName>HaloOnline.Research.Core</AssemblyName>
+    <RootNamespace>HaloOnline.Research.Launcher</RootNamespace>
+    <AssemblyName>HaloOnline.Research.Launcher</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -20,16 +22,15 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
@@ -42,49 +43,54 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Imports\Kernel32.cs" />
-    <Compile Include="Imports\Structs\FloatingSaveArea.cs" />
-    <Compile Include="Imports\Structs\ImageDataDirectory.cs" />
-    <Compile Include="Imports\Structs\ImageDosHeader.cs" />
-    <Compile Include="Imports\Structs\ImageFileHeader32.cs" />
-    <Compile Include="Imports\Structs\ImageNtHeaders32.cs" />
-    <Compile Include="Imports\Structs\ImageOptionalHeader32.cs" />
-    <Compile Include="Imports\Structs\LdtEntry.cs" />
-    <Compile Include="Imports\Structs\LdtHighBits.cs" />
-    <Compile Include="Imports\Structs\MemoryBasicInformation.cs" />
-    <Compile Include="Imports\Structs\MemoryState.cs" />
-    <Compile Include="Imports\Structs\MemoryType.cs" />
-    <Compile Include="Imports\Structs\ThreadContext.cs" />
-    <Compile Include="Imports\Types\MemoryAllocationType.cs" />
-    <Compile Include="Imports\Types\MemoryFreeType.cs" />
-    <Compile Include="Imports\Types\MemoryProtect.cs" />
-    <Compile Include="Imports\Types\ProcessAccessFlags.cs" />
-    <Compile Include="Imports\Types\ThreadAccessFlags.cs" />
-    <Compile Include="Imports\Types\ThreadContextFlags.cs" />
-    <Compile Include="Imports\User32.cs" />
+    <Compile Include="Forms\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Runtime\GameProcess.cs" />
-    <Compile Include="Runtime\GameAddresses.cs" />
-    <Compile Include="Runtime\Tag.cs" />
-    <Compile Include="Runtime\TagCache.cs" />
-    <Compile Include="Runtime\TagClass.cs" />
-    <Compile Include="Utilities\BinaryPatchUtility.cs" />
-    <Compile Include="Utilities\DefaultDictionary.cs" />
-    <Compile Include="Runtime\GameVersion.cs" />
-    <Compile Include="Utilities\ProcessScanner.cs" />
-    <Compile Include="Utilities\ProcessStream.cs" />
-    <Compile Include="Utilities\Range.cs" />
-    <Compile Include="Utilities\ProcessAddress.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Cache\" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="Forms\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HaloOnline.Research.Core\HaloOnline.Research.Core.csproj">
+      <Project>{02e93c37-4cd3-4f21-90a7-5d2809107a3c}</Project>
+      <Name>HaloOnline.Research.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
