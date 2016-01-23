@@ -53,7 +53,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="lpProcName"></param>
         /// <returns></returns>
         [DllImport("kernel32.dll", EntryPoint = "GetProcAddress", SetLastError = true)]
-        private static extern IntPtr UnmanagedGetProcAddress(IntPtr hModule, string lpProcName);
+        private static extern UIntPtr UnmanagedGetProcAddress(IntPtr hModule, string lpProcName);
 
         /// <summary>
         /// Opens an existing thread object.
@@ -78,7 +78,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <returns></returns>
         [DllImport("kernel32.dll", EntryPoint = "CreateRemoteThread", SetLastError = true)]
         private static extern IntPtr UnmanagedCreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttributes,
-            uint dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
+            uint dwStackSize, UIntPtr lpStartAddress, UIntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
 
         /// <summary>
         /// Closes an open object handle.
@@ -141,7 +141,7 @@ namespace HaloOnline.Research.Core.Imports
         [DllImport("kernel32.dll", EntryPoint = "ReadProcessMemory", SetLastError = true)]
         private static extern bool UnmanagedReadProcessMemory(
             IntPtr hProcess,
-            IntPtr lpBaseAddress,
+            UIntPtr lpBaseAddress,
             [Out] byte* lpBuffer,
             int dwSize,
             out int lpNumberOfBytesRead
@@ -160,7 +160,7 @@ namespace HaloOnline.Research.Core.Imports
         [DllImport("kernel32.dll", EntryPoint = "WriteProcessMemory", SetLastError = true)]
         private static extern bool UnmanagedWriteProcessMemory(
             IntPtr hProcess,
-            IntPtr lpBaseAddress,
+            UIntPtr lpBaseAddress,
             byte* lpBuffer,
             int nSize,
             out int lpNumberOfBytesWritten);
@@ -174,7 +174,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="dwLength"></param>
         /// <returns></returns>
         [DllImport("kernel32.dll", EntryPoint = "VirtualQueryEx", SetLastError = true)]
-        private static extern int UnmanagedVirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, 
+        private static extern int UnmanagedVirtualQueryEx(IntPtr hProcess, UIntPtr lpAddress, 
             out MemoryBasicInformation lpBuffer, uint dwLength);
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="lpflOldProtect"></param>
         /// <returns></returns>
         [DllImport("kernel32.dll", EntryPoint = "VirtualProtectEx", SetLastError = true)]
-        private static extern bool UnmanagedVirtualProtectEx(IntPtr hProcess, IntPtr lpAddress,
+        private static extern bool UnmanagedVirtualProtectEx(IntPtr hProcess, UIntPtr lpAddress,
            uint dwSize, MemoryProtect flNewProtect, ref MemoryProtect lpflOldProtect);
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="flProtect"></param>
         /// <returns></returns>
         [DllImport("kernel32.dll", EntryPoint = "VirtualAllocEx", SetLastError = true)]
-        private static extern IntPtr UnmanagedVirtualAllocEx(IntPtr hProcess, IntPtr lpAddress,
+        private static extern UIntPtr UnmanagedVirtualAllocEx(IntPtr hProcess, UIntPtr lpAddress,
            uint dwSize, MemoryAllocationType flAllocationType, MemoryProtect flProtect);
 
         /// <summary>
@@ -213,7 +213,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="dwFreeType"></param>
         /// <returns></returns>
         [DllImport("kernel32.dll", EntryPoint = "VirtualFreeEx", SetLastError = true)]
-        private static extern bool UnmanagedVirtualFreeEx(IntPtr hProcess, IntPtr lpAddress,
+        private static extern bool UnmanagedVirtualFreeEx(IntPtr hProcess, UIntPtr lpAddress,
            uint dwSize, MemoryAllocationType dwFreeType);
 
         /// <summary>
@@ -280,9 +280,9 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="processName"></param>
         /// <exception cref="Win32Exception"></exception>
         /// <returns>The address of the exported function or variable.</returns>
-        public static IntPtr GetProcAddress(IntPtr moduleHandle, string processName)
+        public static UIntPtr GetProcAddress(IntPtr moduleHandle, string processName)
         {
-            IntPtr address = UnmanagedGetProcAddress(moduleHandle, processName);
+            UIntPtr address = UnmanagedGetProcAddress(moduleHandle, processName);
             if (address == null)
             {
                 throw new Win32Exception();
@@ -316,7 +316,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="parameter"></param>
         /// <returns>Returns a handle to the new thread.</returns>
         /// <exception cref="Win32Exception"></exception>
-        public static IntPtr CreateRemoteThread(IntPtr processHandle, IntPtr startAddress, IntPtr parameter)
+        public static IntPtr CreateRemoteThread(IntPtr processHandle, UIntPtr startAddress, UIntPtr parameter)
         {
             IntPtr handle = UnmanagedCreateRemoteThread(processHandle, IntPtr.Zero, 0, startAddress, parameter, 0, IntPtr.Zero);
             if (handle == null)
@@ -435,7 +435,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <exception cref="Win32Exception"></exception>
         public static void ReadProcessMemory(
             IntPtr hProcess,
-            IntPtr lpBaseAddress,
+            UIntPtr lpBaseAddress,
             [Out] byte* lpBuffer,
             int dwSize,
             out int lpNumberOfBytesRead
@@ -459,7 +459,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <exception cref="Win32Exception"></exception>
         public static void WriteProcessMemory(
             IntPtr hProcess,
-            IntPtr lpBaseAddress,
+            UIntPtr lpBaseAddress,
             byte* lpBuffer,
             int nSize,
             out int lpNumberOfBytesWritten)
@@ -477,7 +477,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="address"></param>
         /// <exception cref="Win32Exception"></exception>
         /// <returns></returns>
-        public static MemoryBasicInformation VirtualQueryEx(IntPtr processHandle, IntPtr address)
+        public static MemoryBasicInformation VirtualQueryEx(IntPtr processHandle, UIntPtr address)
         {
             MemoryBasicInformation memInfo;
             if (UnmanagedVirtualQueryEx(processHandle, address, out memInfo, (uint)sizeof(MemoryBasicInformation)) == 0)
@@ -496,7 +496,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="newProtect"></param>
         /// <exception cref="Win32Exception"></exception>
         /// <returns>Returns the previous memory access protection.</returns>
-        public static MemoryProtect VirtualProtectEx(IntPtr processHandle, IntPtr address,
+        public static MemoryProtect VirtualProtectEx(IntPtr processHandle, UIntPtr address,
             uint size, MemoryProtect newProtect)
         {
             MemoryProtect oldProtect = new MemoryProtect();
@@ -518,10 +518,10 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="protect"></param>
         /// <exception cref="Win32Exception"></exception>
         /// <returns></returns>
-        public static IntPtr VirtualAllocEx(IntPtr processHandle, IntPtr address, uint size, MemoryAllocationType type, MemoryProtect protect)
+        public static UIntPtr VirtualAllocEx(IntPtr processHandle, UIntPtr address, uint size, MemoryAllocationType type, MemoryProtect protect)
         {
-            IntPtr addr = UnmanagedVirtualAllocEx(processHandle, address, size, type, protect);
-            if (addr == IntPtr.Zero)
+            UIntPtr addr = UnmanagedVirtualAllocEx(processHandle, address, size, type, protect);
+            if (addr == UIntPtr.Zero)
             {
                 throw new Win32Exception();
             }
@@ -536,7 +536,7 @@ namespace HaloOnline.Research.Core.Imports
         /// <param name="size"></param>
         /// <param name="type"></param>
         /// <exception cref="Win32Exception"></exception>
-        public static void VirtualFreeEx(IntPtr processHandle, IntPtr address, uint size, MemoryAllocationType type)
+        public static void VirtualFreeEx(IntPtr processHandle, UIntPtr address, uint size, MemoryAllocationType type)
         {
             if (!UnmanagedVirtualFreeEx(processHandle, address, size, type))
             {

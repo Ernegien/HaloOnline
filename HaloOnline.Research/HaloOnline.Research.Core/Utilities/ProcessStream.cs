@@ -79,7 +79,7 @@ namespace HaloOnline.Research.Core.Utilities
             int bytesRead;
             fixed (byte* pBuffer = buffer)
             {
-                Kernel32.ReadProcessMemory(ProcessHandle, (IntPtr)Position, pBuffer + offset, count, out bytesRead);
+                Kernel32.ReadProcessMemory(ProcessHandle, (UIntPtr)Position, pBuffer + offset, count, out bytesRead);
             }
             Position += bytesRead;
             return bytesRead;
@@ -93,7 +93,7 @@ namespace HaloOnline.Research.Core.Utilities
             fixed (byte* pBuffer = buffer)
             {
                 int bytesWritten;
-                Kernel32.WriteProcessMemory(ProcessHandle, (IntPtr)Position, pBuffer + offset, count, out bytesWritten);
+                Kernel32.WriteProcessMemory(ProcessHandle, (UIntPtr)Position, pBuffer + offset, count, out bytesWritten);
                 Position += bytesWritten;
             }
         }
