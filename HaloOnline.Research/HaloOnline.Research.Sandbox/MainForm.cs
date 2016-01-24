@@ -96,12 +96,12 @@ namespace HaloOnline.Research.Sandbox
 
         private void Research(GameProcess game)
         {
-            var fmodPatchAddress = new DefaultDictionary<GameVersion, ProcessAddress>(game.Version)
+            var fmodPatchAddress = new DefaultDictionary<GameVersion, uint>(game.Version)
             {
-                [GameVersion.Alpha] = new ProcessAddress(0x140DA75),
-                [GameVersion.Latest] = new ProcessAddress(0xFAA9E5)
+                [GameVersion.Alpha] = ProcessAddress.FromImageAddress(0x140DA75),
+                [GameVersion.Latest] = ProcessAddress.FromImageAddress(0xFAA9E5)
             };
-            game.Memory.WriteByte((ProcessAddress)fmodPatchAddress, 0x2);
+            game.Memory.WriteByte(fmodPatchAddress, 0x2);
         }
     }
 }

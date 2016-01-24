@@ -11,16 +11,16 @@ namespace HaloOnline.Research.Core.Runtime
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private GameProcess Game { get; }
 
-        public uint TagIndexTable => (ProcessAddress)new DefaultDictionary<GameVersion, ProcessAddress>(Game.Version)
+        public uint TagIndexTable => new DefaultDictionary<GameVersion, uint>(Game.Version)
         {
-            [GameVersion.Alpha] = new ProcessAddress(0x22AAFFC),
-            [GameVersion.Latest] = new ProcessAddress(0x2F48008)
+            [GameVersion.Alpha] = ProcessAddress.FromImageAddress(0x22AAFFC),
+            [GameVersion.Latest] = ProcessAddress.FromImageAddress(0x2F48008)
         };
 
-        public uint TagAddressTable => (ProcessAddress)new DefaultDictionary<GameVersion, ProcessAddress>(Game.Version)
+        public uint TagAddressTable => new DefaultDictionary<GameVersion, uint>(Game.Version)
         {
-            [GameVersion.Alpha] = new ProcessAddress(0x22AAFF8),
-            [GameVersion.Latest] = new ProcessAddress(0x2F8C5C8)
+            [GameVersion.Alpha] = ProcessAddress.FromImageAddress(0x22AAFF8),
+            [GameVersion.Latest] = ProcessAddress.FromImageAddress(0x2F8C5C8)
         };
 
         public TagCache(GameProcess game)
@@ -38,20 +38,20 @@ namespace HaloOnline.Research.Core.Runtime
 
             if (Game.Version == GameVersion.Alpha)
             {
-                uint tagIndex = Game.Memory.ReadUInt32(Game.Memory.ReadUInt32((ProcessAddress)TagIndexTable) + datumIndex * sizeof(uint));
+                uint tagIndex = Game.Memory.ReadUInt32(Game.Memory.ReadUInt32(TagIndexTable) + datumIndex * sizeof(uint));
 
                 return tagIndex == uint.MaxValue
                     ? 0
-                    : Game.Memory.ReadUInt32(Game.Memory.ReadUInt32((ProcessAddress)TagAddressTable) + tagIndex * sizeof(uint));
+                    : Game.Memory.ReadUInt32(Game.Memory.ReadUInt32(TagAddressTable) + tagIndex * sizeof(uint));
             }
 
             // latest allocated static buffers instead
             if (Game.Version == GameVersion.Latest)
             {
-                uint tagIndex = Game.Memory.ReadUInt32((ProcessAddress)TagIndexTable + datumIndex * sizeof(uint));
+                uint tagIndex = Game.Memory.ReadUInt32(TagIndexTable + datumIndex * sizeof(uint));
                 return tagIndex == uint.MaxValue
                     ? 0
-                    : Game.Memory.ReadUInt32((ProcessAddress)TagAddressTable + tagIndex * sizeof(uint));
+                    : Game.Memory.ReadUInt32(TagAddressTable + tagIndex * sizeof(uint));
             }
 
             return 0;

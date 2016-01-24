@@ -10,21 +10,15 @@ namespace HaloOnline.Research.Core.Utilities
     public class ProcessAddress : IComparable<ProcessAddress>
     {
         /// <summary>
-        /// The image address.
-        /// </summary>
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private uint ImageAddress { get; }
-
-        /// <summary>
         /// The process address.
         /// </summary>
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private uint Value => ImageAddress - ImageBaseAddress + ProcessBaseAddress;
+        private uint Value { get; }
 
         /// <summary>
         /// Determins whether the static <see cref="Initialize"/> method has been called.
         /// </summary>
-        private static bool Initialized { get; set; }
+        private static bool IsInitialized { get; set; }
 
         /// <summary>
         /// The image base address.
@@ -45,16 +39,16 @@ namespace HaloOnline.Research.Core.Utilities
         {
             ImageBaseAddress = imageBase;
             ProcessBaseAddress = processBase;
-            Initialized = true;
+            IsInitialized = true;
         }
 
         /// <summary>
         /// Initializes a new instance of the ProcessAddress class.
         /// </summary>
-        /// <param name="imageAddress">The static address according to the executable image.</param>
-        public ProcessAddress(uint imageAddress)
+        /// <param name="address">The process address.</param>
+        public ProcessAddress(uint address)
         {
-            ImageAddress = imageAddress;
+            Value = address;
         }
 
         /// <summary>
@@ -63,32 +57,51 @@ namespace HaloOnline.Research.Core.Utilities
         /// <param name="x"></param>
         public static implicit operator ProcessAddress(uint x)
         {
-            if (!Initialized)
+            if (!IsInitialized)
                 throw new FieldAccessException("ProcessAddress.Initialize must be called first.");
 
-            return new ProcessAddress(ToImageAddress(x));
+            return new ProcessAddress(x);
         }
 
         /// <summary>
-        /// Casts a ProcessAddress to a uint representing the actual process address.
+        /// Casts a ProcessAddress value to a uint.
         /// </summary>
         /// <param name="x"></param>
         public static implicit operator uint(ProcessAddress x)
         {
-            if (!Initialized)
+            if (!IsInitialized)
                 throw new FieldAccessException("ProcessAddress.Initialize must be called first.");
 
             return x.Value;
         }
 
         /// <summary>
-        /// Converts a process address back to an image address.
+        /// Converts a process address to an image address.
         /// </summary>
         /// <param name="processAddress"></param>
         /// <returns></returns>
         public static uint ToImageAddress(uint processAddress)
         {
             return processAddress + ImageBaseAddress - ProcessBaseAddress;
+        }
+
+        /// <summary>
+        /// Converts the process address to an image address.
+        /// </summary>
+        /// <returns></returns>
+        public uint ToImageAddress()
+        {
+            return Value + ImageBaseAddress - ProcessBaseAddress;
+        }
+
+        /// <summary>
+        /// Converts an image address to a process address.
+        /// </summary>
+        /// <param name="imageAddress"></param>
+        /// <returns></returns>
+        public static uint FromImageAddress(uint imageAddress)
+        {
+            return imageAddress - ImageBaseAddress + ProcessBaseAddress;
         }
 
         /// <summary>
