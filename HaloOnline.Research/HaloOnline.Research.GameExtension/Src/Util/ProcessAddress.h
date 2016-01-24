@@ -6,6 +6,7 @@ class ProcessAddress
 {
 	private:
 
+		static const char* InitializationErrorMessage;
 		static bool IsInitialized;
 		static uint32_t ImageBaseAddress;
 		static uint32_t ProcessBaseAddress;
@@ -22,7 +23,6 @@ class ProcessAddress
 		~ProcessAddress();
 
 		uint32_t ToImageAddress() const;
-		uint32_t GetValue() const;
 
 		operator uint32_t() const;
 };
