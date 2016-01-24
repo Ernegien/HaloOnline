@@ -109,11 +109,13 @@
             this.btnPlay.TabIndex = 2;
             this.btnPlay.Text = "Play Game";
             this.btnPlay.UseVisualStyleBackColor = true;
+            this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
             // 
             // cmbBuild
             // 
             this.cmbBuild.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbBuild.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbBuild.FormattingEnabled = true;
             this.cmbBuild.Location = new System.Drawing.Point(6, 19);
             this.cmbBuild.Name = "cmbBuild";

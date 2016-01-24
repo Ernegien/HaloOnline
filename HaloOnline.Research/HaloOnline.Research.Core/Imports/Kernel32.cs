@@ -267,7 +267,7 @@ namespace HaloOnline.Research.Core.Imports
         public static void CreateProcess(string commandLine, ProcessCreationFlags creationFlags,
             string currentDirectory, ref ProcessStartupInfo startupInfo, out ProcessInformation processInformation)
         {
-            if (!UnmanagedCreateProcess(null, commandLine, IntPtr.Zero, IntPtr.Zero, false, creationFlags, IntPtr.Zero, null, ref startupInfo, out processInformation))
+            if (!UnmanagedCreateProcess(null, commandLine, IntPtr.Zero, IntPtr.Zero, false, creationFlags, IntPtr.Zero, currentDirectory, ref startupInfo, out processInformation))
             {
                 throw new Win32Exception();
             }

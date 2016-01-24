@@ -27,9 +27,26 @@ namespace HaloOnline.Research.Launcher.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
 <ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-  <string>https://primary.updates.anvilonline.net/update.json</string>
-  <string>https://secondary.updates.anvilonline.net/update.json</string>
-  <string>https://tertiary.updates.anvilonline.net/update.json</string>
+  <string>https://primary.auth.anvilonline.net/</string>
+  <string>https://secondary.auth.anvilonline.net/</string>
+  <string>https://tertiary.auth.anvilonline.net/</string>
+</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection AuthServers {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["AuthServers"]));
+            }
+            set {
+                this["AuthServers"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <string>https://primary.update.anvilonline.net/update.json</string>
+  <string>https://secondary.update.anvilonline.net/update.json</string>
+  <string>https://tertiary.update.anvilonline.net/update.json</string>
 </ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection UpdateServers {
             get {
@@ -44,16 +61,39 @@ namespace HaloOnline.Research.Launcher.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
 <ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-  <string>https://primary.auth.anvilonline.net/</string>
-  <string>https://secondary.auth.anvilonline.net/</string>
-  <string>https://tertiary.auth.anvilonline.net/</string>
+  <string>https://git.anvilonline.net/pubkeys.json</string>
+  <string>https://pubkeys.anvilonline.net/pubkeys.json</string>
 </ArrayOfString>")]
-        public global::System.Collections.Specialized.StringCollection AuthServers {
+        public global::System.Collections.Specialized.StringCollection PublicKeys {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["AuthServers"]));
+                return ((global::System.Collections.Specialized.StringCollection)(this["PublicKeys"]));
             }
             set {
-                this["AuthServers"] = value;
+                this["PublicKeys"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("F:\\Halo Online MS30 Fresh\\halo_online.exe")]
+        public string DefaultHaloExePath {
+            get {
+                return ((string)(this["DefaultHaloExePath"]));
+            }
+            set {
+                this["DefaultHaloExePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("HaloOnline.Research.GameExtension.dll")]
+        public string ExtensionLibraryName {
+            get {
+                return ((string)(this["ExtensionLibraryName"]));
+            }
+            set {
+                this["ExtensionLibraryName"] = value;
             }
         }
     }

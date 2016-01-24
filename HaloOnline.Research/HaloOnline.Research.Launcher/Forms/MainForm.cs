@@ -19,21 +19,40 @@ namespace HaloOnline.Research.Launcher.Forms
         public MainForm()
         {
             InitializeComponent();
+
+            cmbBuild.Items.Add("Current");
+            cmbBuild.SelectedIndex = 0;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            LocateHaloExecutable();
+
+            // TODO: detect current build
+
+            // TODO: populate available builds
+
+        }
+
+        private void LocateHaloExecutable()
+        {
             bool exitRequested = false;
 
-            // check for eldorado or halo_online.exe in the current directory
+            // first check for eldorado or halo_online.exe in the current directory
             HaloExePath = FindHaloExeInDirectory(Environment.CurrentDirectory);
 
-            // otherwise keep prompting user to locate it manually until they find it or give up
+            // next check for what's specified in the app config
+            if (HaloExePath == null && File.Exists(Properties.Settings.Default.DefaultHaloExePath))
+            {
+                HaloExePath = Properties.Settings.Default.DefaultHaloExePath;
+            }
+
+            // if automatic detection fails, keep prompting user to locate it manually until they find it or give up
             while (HaloExePath == null && !exitRequested)
             {
                 using (OpenFileDialog ofd = new OpenFileDialog())
                 {
-                    ofd.Filter = string.Format("Halo Online (*.exe)|{0};{1}", AlphaBuildName, ReleaseBuildName);
+                    ofd.Filter = $"Halo Online (*.exe)|{AlphaBuildName};{ReleaseBuildName}";
 
                     var result = ofd.ShowDialog();
                     if (result == DialogResult.OK)
@@ -44,7 +63,7 @@ namespace HaloOnline.Research.Launcher.Forms
                         }
                         else
                         {
-                            MessageBox.Show(string.Format("Please find {0} or {1} or click Cancel to exit.", AlphaBuildName, ReleaseBuildName), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            MessageBox.Show($"Please find {AlphaBuildName} or {ReleaseBuildName} or click Cancel to exit.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                     }
                     else if (result == DialogResult.Cancel)
@@ -97,23 +116,16 @@ namespace HaloOnline.Research.Launcher.Forms
             return null;
         }
 
-        // TODO: revisit this, not sure why environment is being set via .net instead of within createprocess
-        private uint CreateSuspendedProcess(string filePath, string arguments = "", string binDirectory = "")
+        private Tuple<uint, uint> CreateSuspendedProcess(string filePath, string arguments = "")
         {
-            if (!string.IsNullOrWhiteSpace(binDirectory))
-            {
-                var path = Environment.GetEnvironmentVariable("PATH") + $";{binDirectory}";
-                Environment.SetEnvironmentVariable("PATH", path);
-            }
-
-            ProcessStartupInfo startupInfo = new ProcessStartupInfo();
             ProcessInformation processInfo;
-            Kernel32.CreateProcess(filePath + " " + arguments, ProcessCreationFlags.CreateSuspended, null, ref startupInfo, out processInfo);
+            ProcessStartupInfo startupInfo = new ProcessStartupInfo();
 
-            return processInfo.ProcessId;
+            Kernel32.CreateProcess(filePath + " " + arguments, ProcessCreationFlags.CreateSuspended, Path.GetDirectoryName(filePath), ref startupInfo, out processInfo);
+
+            return new Tuple<uint, uint>(processInfo.ProcessId, processInfo.ThreadId);
         }
 
-        // TODO: clean this up some more
         private void InjectDll(uint processId, string dllPath)
         {
             var targetProcessHandle = Kernel32.OpenProcess(ProcessAccessFlags.All, false, processId);
@@ -123,10 +135,17 @@ namespace HaloOnline.Research.Launcher.Forms
 
             using (ProcessStream ps = new ProcessStream(targetProcessHandle))
             {
-                ps.Write(dllMemoryAddress.ToUInt32(), Encoding.Default.GetBytes(dllPath));
+                ps.Write((uint)dllMemoryAddress.ToUInt64(), Encoding.Default.GetBytes(dllPath));
             }
 
             Kernel32.CreateRemoteThread(targetProcessHandle, loadLibraryExportAddress, dllMemoryAddress);
+        }
+
+        private void btnPlay_Click(object sender, EventArgs e)
+        {
+            Tuple<uint, uint> pInfo = CreateSuspendedProcess(HaloExePath, "--account 123 --sign-in-code 123 -width 1280 -height 720 -window");
+            InjectDll(pInfo.Item1, Path.Combine(Environment.CurrentDirectory, Properties.Settings.Default.ExtensionLibraryName));
+            Kernel32.ResumeThread(pInfo.Item2);
         }
     }
 }
