@@ -1,4 +1,7 @@
-#include "ProcessAddress.h"
+#include "ProcessAddress.hpp"
+#include <exception>
+
+// TODO: store module size to know when process addresses are out of bounds
 
 const char* ProcessAddress::InitializationErrorMessage = "ProcessAddress::Initialize must be called first.";
 bool ProcessAddress::IsInitialized;

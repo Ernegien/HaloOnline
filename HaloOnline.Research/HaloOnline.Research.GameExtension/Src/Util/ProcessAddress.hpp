@@ -1,17 +1,13 @@
 #pragma once
 #include <stdint.h>
-#include <exception>
 
 class ProcessAddress
 {
-	private:
-
-		static const char* InitializationErrorMessage;
-		static bool IsInitialized;
-		static uint32_t ImageBaseAddress;
-		static uint32_t ProcessBaseAddress;
-
-		uint32_t Value;
+	static const char* InitializationErrorMessage;
+	static bool IsInitialized;
+	static uint32_t ImageBaseAddress;
+	static uint32_t ProcessBaseAddress;
+	uint32_t Value;
 
 	public:
 

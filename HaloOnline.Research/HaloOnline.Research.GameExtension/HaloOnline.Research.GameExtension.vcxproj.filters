@@ -23,7 +23,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Util\ProcessAddress.h">
+    <ClInclude Include="Src\Util\DefaultDictionary.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Util\ProcessAddress.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

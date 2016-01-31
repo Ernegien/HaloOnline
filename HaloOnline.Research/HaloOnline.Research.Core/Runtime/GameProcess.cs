@@ -11,6 +11,9 @@ using HaloOnline.Research.Core.Utilities;
 
 namespace HaloOnline.Research.Core.Runtime
 {
+    /// <summary>
+    /// TODO: description
+    /// </summary>
     public class GameProcess : IDisposable
     {
         #region Properties
@@ -21,26 +24,10 @@ namespace HaloOnline.Research.Core.Runtime
         public string Name => Process.ProcessName;
 
         /// <summary>
-        /// The build date.
-        /// </summary>
-        public DateTime BuildDate { get; private set; }
-
-        /// <summary>
         /// The engine version.
         /// </summary>
-        public GameVersion Version
-        {
-            get
-            {
-                switch (BuildDate.Ticks)
-                {
-                    case 0x08d23130cd95d080: return GameVersion.Alpha;
-                    case 0x08d2f4ee77aecf00: return GameVersion.Latest;
-                    default: return GameVersion.Unknown;
-                }
-            }
-        }
-       
+        public GameVersion Version { get; private set; }
+
         /// <summary>
         /// The image base address.
         /// </summary>
@@ -91,6 +78,11 @@ namespace HaloOnline.Research.Core.Runtime
         /// </summary>
         public GameAddresses Addresses { get; private set; }
 
+        /// <summary>
+        /// The main module address context.
+        /// </summary>
+        public ModuleAddressContext ModuleContext { get; private set; }
+
         #endregion
 
         #region Initialization & Disposal
@@ -123,6 +115,7 @@ namespace HaloOnline.Research.Core.Runtime
             ProcessHandle = Kernel32.OpenProcess(ProcessAccessFlags.All, false, (uint)Process.Id);
             MainThreadId = User32.GetWindowThreadProcessId(Process.MainWindowHandle);
             MainThreadHandle = Kernel32.OpenThread(ThreadAccessFlags.All, false, MainThreadId);
+            ModuleContext = new ModuleAddressContext(ImageBaseAddress, ProcessBaseAddress, (uint)Process.MainModule.ModuleMemorySize);
 
             // look away! - get original image base address and build time from PE header - http://blogs.msdn.com/b/kstanton/archive/2004/03/31/105060.aspx
             using (FileStream fs = new FileStream(Process.MainModule.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -132,19 +125,14 @@ namespace HaloOnline.Research.Core.Runtime
                 int ntHeaderOffset = br.ReadInt32();
                 int fileHeaderOffset = Marshal.OffsetOf(typeof(ImageNtHeaders32), nameof(ImageNtHeaders32.FileHeader)).ToInt32();
                 fs.Position = ntHeaderOffset + fileHeaderOffset + Marshal.OffsetOf(typeof(ImageFileHeader32), nameof(ImageFileHeader32.TimeDateStamp)).ToInt32();
-                DateTime unixEpoch = new DateTime(1970, 1, 1);
-                BuildDate = unixEpoch + new TimeSpan(br.ReadUInt32() * TimeSpan.TicksPerSecond);
+                Version = (GameVersion)br.ReadUInt32();
                 int fileHeaderSize = Marshal.SizeOf(typeof(ImageFileHeader32));
                 int imageBaseOffset = Marshal.OffsetOf(typeof(ImageOptionalHeader32), nameof(ImageOptionalHeader32.ImageBase)).ToInt32();
                 fs.Position = ntHeaderOffset + fileHeaderOffset + fileHeaderSize + imageBaseOffset;
                 ImageBaseAddress = br.ReadUInt32();
             }
 
-            if (Version == GameVersion.Unknown)
-                throw new NotSupportedException("Unknown game version.");
-
             // initialize access to various sub-systems
-            ProcessAddress.Initialize(ImageBaseAddress, ProcessBaseAddress);
             Memory = new ProcessStream(ProcessHandle);
             TlsAddress = GetTlsAddress(MainThreadHandle);
             TagCache = new TagCache(this);

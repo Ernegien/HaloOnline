@@ -51,11 +51,16 @@ namespace HaloOnline.Research.Sandbox
         private void Globals(GameProcess game)
         {
             // alpha
+
+            var playerMappingGlobals = game.Memory.ReadUInt32(game.TlsAddress + 0x5C);
+
+
             var chudGlobals2 = game.Memory.ReadUInt32(game.TlsAddress + 0x420);
             var hudOpacity = game.Memory.ReadSingle(chudGlobals2 + 0x24C);
 
             var chudGlobals = game.Memory.ReadUInt32(game.TlsAddress + 0x424);
-            var hudItemOpacity = game.Memory.ReadSingle(chudGlobals + 0x184);   // first item
+            var firstHudItemOpacity = game.Memory.ReadSingle(chudGlobals + 0x184);
+            var secondHudItemOpacity = game.Memory.ReadSingle(chudGlobals + 0x188);
 
             var cortanaEffectChudGlobals = game.Memory.ReadUInt32(game.TlsAddress + 0x440);
 
@@ -98,8 +103,8 @@ namespace HaloOnline.Research.Sandbox
         {
             var fmodPatchAddress = new DefaultDictionary<GameVersion, uint>(game.Version)
             {
-                [GameVersion.Alpha] = ProcessAddress.FromImageAddress(0x140DA75),
-                [GameVersion.Latest] = ProcessAddress.FromImageAddress(0xFAA9E5)
+                [GameVersion.Alpha] = ModuleAddress.FromImageAddress(game.ModuleContext, 0x140DA75),
+                [GameVersion.Latest] = ModuleAddress.FromImageAddress(game.ModuleContext, 0xFAA9E5)
             };
             game.Memory.WriteByte(fmodPatchAddress, 0x2);
         }

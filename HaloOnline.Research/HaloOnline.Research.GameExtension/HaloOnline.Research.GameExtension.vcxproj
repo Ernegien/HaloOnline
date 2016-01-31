@@ -168,7 +168,8 @@
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Util\ProcessAddress.h" />
+    <ClInclude Include="Src\Util\DefaultDictionary.hpp" />
+    <ClInclude Include="Src\Util\ProcessAddress.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

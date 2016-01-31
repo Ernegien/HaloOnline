@@ -13,14 +13,14 @@ namespace HaloOnline.Research.Core.Runtime
 
         public uint TagIndexTable => new DefaultDictionary<GameVersion, uint>(Game.Version)
         {
-            [GameVersion.Alpha] = ProcessAddress.FromImageAddress(0x22AAFFC),
-            [GameVersion.Latest] = ProcessAddress.FromImageAddress(0x2F48008)
+            [GameVersion.Alpha] = ModuleAddress.FromImageAddress(Game.ModuleContext, 0x22AAFFC),
+            [GameVersion.Latest] = ModuleAddress.FromImageAddress(Game.ModuleContext, 0x2F48008)
         };
 
         public uint TagAddressTable => new DefaultDictionary<GameVersion, uint>(Game.Version)
         {
-            [GameVersion.Alpha] = ProcessAddress.FromImageAddress(0x22AAFF8),
-            [GameVersion.Latest] = ProcessAddress.FromImageAddress(0x2F8C5C8)
+            [GameVersion.Alpha] = ModuleAddress.FromImageAddress(Game.ModuleContext, 0x22AAFF8),
+            [GameVersion.Latest] = ModuleAddress.FromImageAddress(Game.ModuleContext, 0x2F8C5C8)
         };
 
         public TagCache(GameProcess game)

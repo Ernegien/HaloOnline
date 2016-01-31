@@ -84,10 +84,11 @@
     <Compile Include="Utilities\BinaryPatchUtility.cs" />
     <Compile Include="Utilities\DefaultDictionary.cs" />
     <Compile Include="Runtime\GameVersion.cs" />
+    <Compile Include="Utilities\ModuleAddressContext.cs" />
     <Compile Include="Utilities\ProcessScanner.cs" />
     <Compile Include="Utilities\ProcessStream.cs" />
     <Compile Include="Utilities\Range.cs" />
-    <Compile Include="Utilities\ProcessAddress.cs" />
+    <Compile Include="Utilities\ModuleAddress.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Cache\" />

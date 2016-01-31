@@ -82,7 +82,7 @@ namespace HaloOnline.Research.Scanner.Forms
             StringBuilder sb = new StringBuilder();
             foreach (var result in results)
             {
-                uint imageAddress = ProcessAddress.ToImageAddress(result);
+                uint imageAddress = ModuleAddress.ToImageAddress(Game.ModuleContext, result);
                 uint processAddress = result;
 
                 sb.AppendLine(string.Format("0x{0} | 0x{1}", Convert.ToString(imageAddress, 16).ToUpperInvariant().PadLeft(8, '0'),
