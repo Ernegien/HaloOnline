@@ -62,14 +62,14 @@ namespace HaloOnline.Research.Core.Utilities
         /// <param name="context">The module address context.</param>
         /// <param name="imageAddress">The image address.</param>
         /// <returns>The module address.</returns>
-        public static uint FromImageAddress(ModuleAddressContext context, uint imageAddress)
+        public static ModuleAddress FromImageAddress(ModuleAddressContext context, uint imageAddress)
         {
             uint moduleAddress = imageAddress - context.ImageBaseAddress + context.BaseAddress;
             
             if (!IsValidModuleAddress(context, moduleAddress))
                 throw new ArgumentOutOfRangeException();
 
-            return moduleAddress;
+            return new ModuleAddress(context, moduleAddress);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace HaloOnline.Research.Core.Utilities
         }
 
         /// <summary>
-        /// Casts a <see cref="ModuleAddress"/> value to an unsigned integer.
+        /// Casts a <see cref="ModuleAddress"/> value to a UInt32.
         /// </summary>
         /// <param name="address">The module address value.</param>
         public static implicit operator uint(ModuleAddress address)

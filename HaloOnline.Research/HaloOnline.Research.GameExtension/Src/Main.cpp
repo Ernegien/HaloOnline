@@ -1,17 +1,28 @@
 #include <windows.h>
-#include "Util/ProcessAddress.hpp"
 #include "Util/DefaultDictionary.hpp"
 #include <fstream>
 #include <unordered_map>
+#include <Psapi.h>
+#include "Util/ModuleAddress.hpp"
+#include "Util/EngineVersion.hpp"
+#include "Util/Patch.hpp"
+#include "Util/ModificationSet.hpp"
 
-void InitializeProcessAddress()
+// TODO: globalize these elsewhere
+ModuleAddressContext MainModuleContext;
+EngineVersion Version;
+
+void GatherModuleInfo()
 {
-	// get process base address
-	HMODULE module = GetModuleHandle(nullptr);
-
+	MODULEINFO moduleInfo = { 0 };
+	if (!GetModuleInformation(GetCurrentProcess(), GetModuleHandle(nullptr), &moduleInfo, sizeof(moduleInfo)))
+	{
+		throw std::exception("Unable to retrieve module information.");
+	}
+	
 	// get loaded module's file path
 	WCHAR modulePath[MAX_PATH + 1] = { 0 };
-	GetModuleFileName(module, modulePath, _countof(modulePath));
+	GetModuleFileName(GetModuleHandle(nullptr), modulePath, _countof(modulePath));
 
 	// grab the original image base address and build timestamp from the PE header
 	uint32_t imageBaseAddress, imageTimestamp;
@@ -24,15 +35,10 @@ void InitializeProcessAddress()
 	fs.read(reinterpret_cast<char*>(&imageBaseAddress), sizeof(imageBaseAddress));
 	fs.close();
 
-	ProcessAddress::Initialize(imageBaseAddress, reinterpret_cast<uint32_t>(module));
+	Version = static_cast<EngineVersion>(imageTimestamp);
+	MainModuleContext = ModuleAddressContext(imageBaseAddress, reinterpret_cast<uint32_t>(moduleInfo.lpBaseOfDll), moduleInfo.SizeOfImage);
 }
 
-// The engine version represented by the executable build timestamp
-enum EngineVersion : uint32_t
-{
-	Alpha = 0x550c2dc5,
-	Latest = 0x565493d6
-};
 
 
 LONG WINAPI CustomExceptionFilter(EXCEPTION_POINTERS *exceptionInfo)
@@ -47,43 +53,51 @@ LONG WINAPI CustomExceptionFilter(EXCEPTION_POINTERS *exceptionInfo)
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
+typedef DefaultDictionary<EngineVersion, ModuleAddress> EngineAddressMap;
+typedef DefaultDictionary<EngineVersion, ModificationSet> EngineModificationSetMap;
+
 bool __stdcall DllMain(void* p_Module, unsigned long p_Reason, void* p_Reserved)
 {
-	// exception traces
-	//AddVectoredExceptionHandler()
-
 	// TODO: have argument to wait indefinitely for attached debugger before continuing
-	Sleep(10000);
+	Sleep(15000);
 
-	//SetUnhandledExceptionFilter(nullptr);
-	//SetUnhandledExceptionFilter(CustomExceptionFilter);
-
-	//int* p1 = NULL;
-	//*p1 = 0;
-
-	InitializeProcessAddress();
-
-
-	EngineVersion engineVersion = Latest;
-
-	// vanilla
-	const std::unordered_map<EngineVersion, ProcessAddress> fmodPatchAddress
-	{
-		{ Alpha, ProcessAddress::FromImageAddress(0x140DA75) },
-		{ Latest, ProcessAddress::FromImageAddress(0xFAA9E5) }
-	};
-
-	ProcessAddress patchAddr = fmodPatchAddress.at(engineVersion);
+	GatherModuleInfo();
 
 	// custom
-	DefaultDictionary<EngineVersion, ProcessAddress> fmodPatchAddress2(engineVersion,
+	EngineAddressMap fmodPatchAddress2(Version,
 	{
-		{ Alpha, ProcessAddress::FromImageAddress(0x140DA75) },
-		{ Latest, ProcessAddress::FromImageAddress(0xFAA9E5) }
+		{ Alpha, ModuleAddress::FromImageAddress(MainModuleContext, 0x140DA75) },
+		{ Latest, ModuleAddress::FromImageAddress(MainModuleContext, 0xFAA9E5) }
 	});
 
-	ProcessAddress patchAddr2 = fmodPatchAddress2;
+	ModuleAddress patchAddr = fmodPatchAddress2;
 
+	ModificationSet({
+		Patch::Create(patchAddr, { 0x12, 0x53, 0x95 }),
+		Patch::Create(patchAddr, { 0x0 })
+	}).Apply();
+
+	auto set1 = ModificationSet({
+		Patch::Create(patchAddr,{ 0x12, 0x53, 0x95 }),
+		Patch::Create(patchAddr,{ 0x0 })
+	});
+	set1.Toggle();
+	set1.Toggle();
+
+	auto set2 = ModificationSet({
+		Patch::Create(patchAddr,{ 0x12, 0x53, 0x95 }),
+		Patch::Create(patchAddr,{ 0x0 })
+	});
+
+	//ModificationSet({
+	//	set1,
+	//	set2
+	//}).Apply();
+
+
+
+	Patch testpatch = Patch(patchAddr, { 0x00, 0x01, 0x2, 0x3 });
+	testpatch.Apply();
 
 
 	return true;

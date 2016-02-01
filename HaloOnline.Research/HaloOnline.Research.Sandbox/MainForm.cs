@@ -101,7 +101,7 @@ namespace HaloOnline.Research.Sandbox
 
         private void Research(GameProcess game)
         {
-            var fmodPatchAddress = new DefaultDictionary<GameVersion, uint>(game.Version)
+            ModuleAddress fmodPatchAddress = new DefaultDictionary<GameVersion, ModuleAddress>(game.Version)
             {
                 [GameVersion.Alpha] = ModuleAddress.FromImageAddress(game.ModuleContext, 0x140DA75),
                 [GameVersion.Latest] = ModuleAddress.FromImageAddress(game.ModuleContext, 0xFAA9E5)

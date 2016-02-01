@@ -164,12 +164,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Util\ProcessAddress.cpp" />
+    <ClCompile Include="Src\Util\IModification.cpp" />
+    <ClCompile Include="Src\Util\ModuleAddress.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="Src\Util\ModuleAddressContext.cpp" />
+    <ClCompile Include="Src\Util\Patch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Util\DefaultDictionary.hpp" />
-    <ClInclude Include="Src\Util\ProcessAddress.hpp" />
+    <ClInclude Include="Src\Util\EngineVersion.hpp" />
+    <ClInclude Include="Src\Util\IModification.hpp" />
+    <ClInclude Include="Src\Util\ModificationSet.hpp" />
+    <ClInclude Include="Src\Util\ModuleAddress.hpp" />
+    <ClInclude Include="Src\Util\ModuleAddressContext.hpp" />
+    <ClInclude Include="Src\Util\Patch.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

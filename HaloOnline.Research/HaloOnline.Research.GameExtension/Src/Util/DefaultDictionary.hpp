@@ -8,7 +8,7 @@ template <typename K, typename V> class DefaultDictionary
 
 	public:
 
-		DefaultDictionary(const K &key) : defaultKey(key) { }
+		explicit DefaultDictionary(const K &key) : defaultKey(key) { }
 
 		DefaultDictionary(const K &key, std::initializer_list<std::pair<const K, V>> list) : defaultKey(key), map(list) { }
 
