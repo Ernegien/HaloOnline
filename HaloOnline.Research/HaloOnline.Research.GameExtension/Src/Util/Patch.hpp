@@ -1,13 +1,11 @@
 #pragma once
-#include "IModification.hpp"
 #include <memory>
 #include <vector>
+#include "Modifiable.hpp"
 
-typedef const std::initializer_list<uint8_t> PatchBytes;
-
-class Patch : public IModification
+class Patch : public Modifiable
 {
-	uint32_t Address = 0;
+	const uint32_t Address = 0;
 
 	// TODO: patch flags
 
@@ -16,12 +14,13 @@ class Patch : public IModification
 
 public:
 
+	// TODO: allow for the ability to specify original data as an argument, might want persistence via source code and the ability to detect modification state
 	// TODO: add patch flags as an argument - PauseThread | PreserveProtect etc.
-	explicit Patch(const uint32_t address, PatchBytes &modifications);
-	//explicit Patch(const uint32_t address, std::vector<uint8_t> modifications);
+	Patch(const uint32_t address, const std::initializer_list<uint8_t> &modifications);
+	Patch(const uint32_t address, const std::vector<uint8_t> modifications);
 
 	void Apply() override;
 	void Reset() override;
 
-	static std::shared_ptr<Patch> Create(const uint32_t address, PatchBytes &modifications);
+	static std::shared_ptr<Patch> Create(const uint32_t address, const std::initializer_list<uint8_t> &modifications);
 };

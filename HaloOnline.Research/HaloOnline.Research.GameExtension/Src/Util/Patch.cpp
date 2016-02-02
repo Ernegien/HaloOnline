@@ -1,14 +1,14 @@
 #include "Patch.hpp"
 
-Patch::Patch(const uint32_t address, PatchBytes &modifications) : Address(address), ModifiedData(modifications)
+Patch::Patch(const uint32_t address, const std::initializer_list<uint8_t> &modifications) : Address(address), ModifiedData(modifications)
 {
 
 }
 
-//Patch::Patch(const uint32_t address, std::vector<uint8_t> modifications) : IModification(address, modifications)
-//{
-//	
-//}
+Patch::Patch(const uint32_t address, const std::vector<uint8_t> modifications) : Address(address), ModifiedData(modifications)
+{
+	
+}
 
 void Patch::Apply()
 {
@@ -28,7 +28,7 @@ void Patch::Reset()
 	}
 }
 
-std::shared_ptr<Patch> Patch::Create(const uint32_t address, PatchBytes &modifications)
+std::shared_ptr<Patch> Patch::Create(const uint32_t address, const std::initializer_list<uint8_t> &modifications)
 {
 	return std::make_shared<Patch>(address, modifications);
 }

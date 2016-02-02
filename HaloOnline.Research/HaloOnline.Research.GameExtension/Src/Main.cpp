@@ -7,6 +7,7 @@
 #include "Util/EngineVersion.hpp"
 #include "Util/Patch.hpp"
 #include "Util/ModificationSet.hpp"
+#include "Util/Hook.hpp"
 
 // TODO: globalize these elsewhere
 ModuleAddressContext MainModuleContext;
@@ -39,8 +40,6 @@ void GatherModuleInfo()
 	MainModuleContext = ModuleAddressContext(imageBaseAddress, reinterpret_cast<uint32_t>(moduleInfo.lpBaseOfDll), moduleInfo.SizeOfImage);
 }
 
-
-
 LONG WINAPI CustomExceptionFilter(EXCEPTION_POINTERS *exceptionInfo)
 {
 	MessageBoxA(nullptr, std::string("EIP: 0x%x", exceptionInfo->ContextRecord->Eip).c_str(), "Game Crash", MB_OK);
@@ -56,14 +55,14 @@ LONG WINAPI CustomExceptionFilter(EXCEPTION_POINTERS *exceptionInfo)
 typedef DefaultDictionary<EngineVersion, ModuleAddress> EngineAddressMap;
 typedef DefaultDictionary<EngineVersion, ModificationSet> EngineModificationSetMap;
 
-bool __stdcall DllMain(void* p_Module, unsigned long p_Reason, void* p_Reserved)
+void TestCave()
 {
-	// TODO: have argument to wait indefinitely for attached debugger before continuing
-	Sleep(15000);
+	
+}
 
-	GatherModuleInfo();
-
-	// custom
+// used to make sure I'm not breaking things as I'm designing class internals
+void UseCaseTests()
+{
 	EngineAddressMap fmodPatchAddress2(Version,
 	{
 		{ Alpha, ModuleAddress::FromImageAddress(MainModuleContext, 0x140DA75) },
@@ -72,32 +71,57 @@ bool __stdcall DllMain(void* p_Module, unsigned long p_Reason, void* p_Reserved)
 
 	ModuleAddress patchAddr = fmodPatchAddress2;
 
-	ModificationSet({
-		Patch::Create(patchAddr, { 0x12, 0x53, 0x95 }),
-		Patch::Create(patchAddr, { 0x0 })
-	}).Apply();
-
-	auto set1 = ModificationSet({
-		Patch::Create(patchAddr,{ 0x12, 0x53, 0x95 }),
-		Patch::Create(patchAddr,{ 0x0 })
-	});
-	set1.Toggle();
-	set1.Toggle();
-
-	auto set2 = ModificationSet({
-		Patch::Create(patchAddr,{ 0x12, 0x53, 0x95 }),
-		Patch::Create(patchAddr,{ 0x0 })
-	});
-
-	//ModificationSet({
-	//	set1,
-	//	set2
-	//}).Apply();
-
-
-
+	// simple patches, local persistence
+	Patch(patchAddr, { 0x00, 0x01, 0x2, 0x3 }).Apply();
 	Patch testpatch = Patch(patchAddr, { 0x00, 0x01, 0x2, 0x3 });
 	testpatch.Apply();
+
+	// random casts/dereferences
+	std::shared_ptr<Hook> testHookSharedPtr = Hook::Create(0x12345, TestCave);
+	Hook* testHookPtr = testHookSharedPtr.get();
+	Hook testHookObject = *testHookPtr;
+	Modifiable* testModifiable = testHookPtr;
+
+	ModificationSet({
+		Patch::Create(patchAddr,{ 0x12, 0x53, 0x95 }),
+		Patch::Create(patchAddr,{ 0x0 }),
+		Hook::Create(0x12345, TestCave, Call),
+		Hook::Create(0x12345, reinterpret_cast<void*>(0x123456)),
+		ModificationSet::Create({
+			Patch::Create(patchAddr,{ 0x63 })
+		})
+	}).Apply();
+
+	auto complexSet = ModificationSet::Create({
+
+		// these patches do X
+		Patch::Create(patchAddr, { 0x12, 0x53, 0x95 }),
+		Patch::Create(patchAddr, { 0x0 }),
+
+		// these hooks do Y
+		Hook::Create(0x12345, TestCave, Call),
+		Hook::Create(0x12345, reinterpret_cast<void*>(0x123456)),
+
+		// other random stuff
+		ModificationSet::Create({
+			Patch::Create(patchAddr,{ 0x63 })
+		})
+
+	});
+	complexSet->Apply();
+	complexSet->Toggle();
+	complexSet->Toggle();
+	complexSet->Reset();
+}
+
+bool __stdcall DllMain(void* p_Module, unsigned long p_Reason, void* p_Reserved)
+{
+	// TODO: have argument to wait indefinitely for attached debugger before continuing
+	Sleep(15000);
+
+	GatherModuleInfo();
+
+	UseCaseTests();
 
 
 	return true;

@@ -1,32 +1,18 @@
 #pragma once
-#include "IModification.hpp"
+#include "Modifiable.hpp"
+#include <memory>
+#include <vector>
 
-class ModificationSet : public IModification
+class ModificationSet : public Modifiable
 {
-	const std::vector<std::shared_ptr<IModification>> Modifications;
+	std::vector<std::shared_ptr<Modifiable>> Modifications;
 
 public:
-	ModificationSet(const std::initializer_list<std::shared_ptr<IModification>> &modifications) : Modifications(modifications) { }
-	//ModificationSet(const std::initializer_list<ModificationSet> &modifications)
-	//{
-	//	// TODO:
-	//}
 
-	void Apply() override
-	{
-		if (!_isApplied)
-		{
-			// TODO: loop through each mod and apply it
-			_isApplied = true;
-		}
-	}
-	
-	void Reset() override
-	{
-		if (_isApplied)
-		{
-			// TODO: reset it
-			_isApplied = false;
-		}
-	}
+	ModificationSet(const std::initializer_list<std::shared_ptr<Modifiable>> &modifications);
+
+	void Apply() override;
+	void Reset() override;
+
+	static std::shared_ptr<ModificationSet> Create(const std::initializer_list<std::shared_ptr<Modifiable>> &modifications);
 };

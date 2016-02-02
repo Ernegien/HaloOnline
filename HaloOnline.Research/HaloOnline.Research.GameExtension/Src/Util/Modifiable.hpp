@@ -1,13 +1,15 @@
 #pragma once
 
-class IModification
+class Modifiable
 {
 protected:
+
+	// TODO: name member? - likely only to be used for debug logging purposes
 	bool _isApplied = false;
 
 public:
 
-	virtual ~IModification();
+	virtual ~Modifiable();
 
 	bool IsApplied() const;
 	void Toggle();
